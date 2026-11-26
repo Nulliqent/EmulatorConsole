@@ -4,11 +4,58 @@ services:
       context: .
       dockerfile: Dockerfile/emulator.Dockerfile
     image: aws-emulator
-    container_name: emulator
+    container_name: ${EMULATOR_CONTAINER:-emulator}
+    # Run as the host user so the files the Emulator publishes (0600, in a 0700 folder) stay readable
+    # to the Console and the tests. The e2e script exports HOST_UID and HOST_GID.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    init: true
     command: ["-p", "${PORT:-9297}"]
     ports:
       - "127.0.0.1:${PORT:-9297}:${PORT:-9297}"
     volumes:
-      - .aws/emulator:/home/emulator/.aws/emulator
+      - ${EMULATOR_HOME:-./.aws/emulator}:/home/emulator/.aws/emulator
+    # A home the run's user can write to, whatever its uid.
+    tmpfs:
+      - /home/emulator:uid=${HOST_UID:-1000},gid=${HOST_GID:-1000},mode=0700
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS --cacert /home/emulator/.aws/emulator/${PORT:-9297}/ca.pem https://localhost:${PORT:-9297}/__admin/health >/dev/null"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
     mem_limit: 2g
     memswap_limit: 2g
+
+  console:
+    build:
+      context: .
+      dockerfile: Dockerfile/console.Dockerfile
+    image: emulator-console
+    container_name: ${CONSOLE_CONTAINER:-console}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    init: true
+    depends_on:
+      emulator:
+        condition: service_started # the Console shows a stopped Emulator; it must not wait for one
+    environment:
+      CONSOLE_BIND: "0.0.0.0" # inside the container; the published port below is loopback only
+      CONSOLE_PORT: "${CONSOLE_PORT:-9298}"
+      GATEWAY_PORT: "${GATEWAY_PORT:-9300}" # reserved; the Gateway comes in a later ticket
+      EMULATOR_HOST: emulator
+      EMULATOR_PORT: "${PORT:-9297}" # compose's PORT is the Console's EMULATOR_PORT
+      EMULATOR_TLS_SERVERNAME: localhost
+      EMULATOR_HOME: /home/console/.aws/emulator
+    ports:
+      - "127.0.0.1:${CONSOLE_PORT:-9298}:${CONSOLE_PORT:-9298}"
+      - "127.0.0.1:${GATEWAY_PORT:-9300}:${GATEWAY_PORT:-9300}"
+    volumes:
+      # Read-only: the Console reads <port>/ca.pem and <port>/emulator_credentials, never writes.
+      - ${EMULATOR_HOME:-./.aws/emulator}:/home/console/.aws/emulator:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:${CONSOLE_PORT:-9298}/api/health"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 512m
