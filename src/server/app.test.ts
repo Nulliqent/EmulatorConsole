@@ -8,6 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
+import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
 import type { Config } from "./config.js";
 
 const SECRET_KEY_ID = "AKIATESTKEYIDSHOULDNEVERLEAK";
@@ -97,6 +98,7 @@ beforeAll(async () => {
     emulatorPort,
     emulatorHome: path.join(tmp, "home"),
     webRoot: web,
+    modelIndexDir: path.join(process.cwd(), "data", "model-index"),
   };
   consoleServer = createApp(config);
   await new Promise<void>((r) => consoleServer.listen(config.port, "127.0.0.1", r));
@@ -200,5 +202,79 @@ describe("methods", () => {
     const res = await request("HEAD", host(), "/api/health");
     expect(res.status).toBe(200);
     expect(res.body).toBe("");
+  });
+});
+
+describe("Service Model index API", () => {
+  const host = () => ({ host: `127.0.0.1:${config.port}` });
+
+  it("lists the 436 services with counts and the Emulator version", async () => {
+    const res = await get(host(), "/api/services");
+    expect(res.status).toBe(200);
+    const body = JSON.parse(res.body) as ServicesResponse;
+    expect(body.services).toHaveLength(436);
+    expect(body.meta.emulator.version).toBe("1.0.509");
+    const dynamo = body.services.find((s) => s.sdkId === "DynamoDB");
+    expect(dynamo).toMatchObject({ listClass: "list", protocol: "awsJson1_0" });
+  });
+
+  it("returns one service's operations, looked up by an SDK ID with spaces", async () => {
+    const res = await get(host(), "/api/service?sdkId=Secrets%20Manager");
+    expect(res.status).toBe(200);
+    const body = JSON.parse(res.body) as ServiceResponse;
+    expect(body.service.sdkId).toBe("Secrets Manager");
+    expect(body.emulator.version).toBe("1.0.509");
+    const create = body.operations.find((o) => o.name === "CreateSecret");
+    expect(create?.sensitive.input).toContain("SecretString");
+    expect(create?.implementation).toBe("implemented");
+    expect(body).not.toHaveProperty("shapes");
+  });
+
+  it("refuses a missing or unknown SDK ID", async () => {
+    expect((await get(host(), "/api/service")).status).toBe(400);
+    expect((await get(host(), "/api/service?sdkId=Nope")).status).toBe(404);
+    expect((await get(host(), "/api/service?sdkId=__proto__")).status).toBe(404);
+  });
+
+  it("is read-only", async () => {
+    expect((await request("POST", host(), "/api/services")).status).toBe(405);
+  });
+
+  it("accepts a slug in place of an SDK ID", async () => {
+    const res = await get(host(), "/api/service?slug=secrets-manager");
+    expect(JSON.parse(res.body).service.sdkId).toBe("Secrets Manager");
+  });
+
+  it("returns a service's shape graph, or the shapes of one operation, with error traits intact", async () => {
+    const all = JSON.parse((await get(host(), "/api/service/shapes?sdkId=DynamoDB")).body) as ShapesResponse;
+    const one = JSON.parse((await get(host(), "/api/service/shapes?slug=dynamodb&operation=PutItem")).body) as ShapesResponse;
+    expect(all.serviceShapeId).toBe("com.amazonaws.dynamodb#DynamoDB_20120810");
+    const err = all.shapes["com.amazonaws.dynamodb#ConditionalCheckFailedException"] as { traits: Record<string, unknown> };
+    expect(err.traits["smithy.api#error"]).toBe("client");
+    expect(Object.keys(one.shapes).length).toBeLessThan(Object.keys(all.shapes).length);
+    expect(one.shapes).toHaveProperty(["com.amazonaws.dynamodb#PutItemInput"]);
+    expect((await get(host(), "/api/service/shapes?sdkId=DynamoDB&operation=Nope")).status).toBe(404);
+    expect((await get(host(), "/api/service/shapes?sdkId=__proto__")).status).toBe(404);
+    expect((await get(host(), "/api/service/shapes")).status).toBe(400);
+  });
+
+  it("lets the browser revalidate the model routes with an ETag", async () => {
+    const first = await get(host(), "/api/services");
+    const etag = first.headers.etag as string;
+    expect(etag).toMatch(/^"/);
+    expect(first.headers["cache-control"]).toBe("private, no-cache");
+    const again = await get({ ...host(), "if-none-match": etag }, "/api/services");
+    expect(again.status).toBe(304);
+    expect(again.body).toBe("");
+    expect((await get({ ...host(), "if-none-match": '"other"' }, "/api/services")).status).toBe(200);
+  });
+
+  it("refuses a request a browser marks cross-site or same-site, on /api only", async () => {
+    for (const site of ["cross-site", "same-site"]) {
+      expect((await get({ ...host(), "sec-fetch-site": site }, "/api/services")).status).toBe(403);
+      expect((await get({ ...host(), "sec-fetch-site": site }, "/api/health")).status).toBe(403);
+    }
+    expect((await get({ ...host(), "sec-fetch-site": "same-origin" }, "/api/services")).status).toBe(200);
+    expect((await get({ ...host(), "sec-fetch-site": "none" }, "/api/services")).status).toBe(200);
   });
 });

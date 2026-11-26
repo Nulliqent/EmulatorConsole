@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { checkRequest } from "./guard.js";
+import { checkFetchSite, checkRequest } from "./guard.js";
+
+describe("checkFetchSite", () => {
+  it.each([undefined, "same-origin", "none"])("allows Sec-Fetch-Site %s", (site) => {
+    expect(checkFetchSite({ "sec-fetch-site": site })).toBeNull();
+  });
+
+  it.each(["cross-site", "same-site", "", "weird"])("refuses Sec-Fetch-Site %j", (site) => {
+    expect(checkFetchSite({ "sec-fetch-site": site })?.status).toBe(403);
+  });
+});
 
 const PORT = 9298;
 

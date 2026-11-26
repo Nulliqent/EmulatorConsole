@@ -16,6 +16,8 @@ export type Config = {
   emulatorHome: string;
   /** Built UI files. */
   webRoot: string;
+  /** The generated Service Model index (`npm run model-index`). */
+  modelIndexDir: string;
 };
 
 function intFrom(value: string | undefined, fallback: number): number {
@@ -33,5 +35,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     emulatorTlsServername: env.EMULATOR_TLS_SERVERNAME || undefined,
     emulatorHome: env.EMULATOR_HOME ?? path.join(env.HOME ?? "/", ".aws", "emulator"),
     webRoot: path.resolve(env.WEB_ROOT ?? path.join(import.meta.dirname, "..", "web")),
+    // From dist/server and from src/server alike, two levels up is the project root.
+    modelIndexDir: path.resolve(env.MODEL_INDEX_DIR ?? path.join(import.meta.dirname, "..", "..", "data", "model-index")),
   };
 }

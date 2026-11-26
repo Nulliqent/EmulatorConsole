@@ -11,6 +11,7 @@
     "dev:web": "vite",
     "build": "vite build && tsc -p tsconfig.server.json",
     "start": "node dist/server/main.js",
+    "model-index": "tsx src/server/model-index/build/cli.ts",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run",
