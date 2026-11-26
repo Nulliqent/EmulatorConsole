@@ -1,0 +1,8 @@
+node_modules
+dist
+.git
+.aws
+.claude
+aws-emulator
+api-models-aws
+docs

@@ -1,0 +1,14 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: 13px/20px var(--sans); color: var(--ink); background: var(--bay);
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--ink2); }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-pane); padding: 16px; }
+.shell { max-width: 720px; margin: 0 auto; padding: 24px 16px; display: grid; gap: 16px; }
+.shell h1 { margin: 0; font-size: var(--t-headline-size); line-height: var(--t-headline-lh); font-weight: var(--t-headline-wt); }
+.status::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: currentColor; }
+.status.down { color: var(--red); }
