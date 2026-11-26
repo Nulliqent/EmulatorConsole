@@ -1,0 +1,626 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-26T03:43:48+00:00",
+  "title": "Design System: Emulator Console",
+  "extensions": {
+    "colorMeta": {
+      "bay-steel": {
+        "role": "neutral",
+        "displayName": "Bay Steel",
+        "canonical": "#d9dee2",
+        "cssVar": "--bay",
+        "dark": "#101417",
+        "tonalRamp": [
+          "#2b2c2d",
+          "#57595a",
+          "#828588",
+          "#aeb2b5",
+          "#e1e5e8",
+          "#eaedef",
+          "#f4f5f6",
+          "#fbfcfc"
+        ]
+      },
+      "strip-white": {
+        "role": "neutral",
+        "displayName": "Strip White",
+        "canonical": "#ffffff",
+        "cssVar": "--strip",
+        "dark": "#1b2126",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#ffffff",
+        "cssVar": "--surface",
+        "dark": "#171c20",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "sunk": {
+        "role": "neutral",
+        "displayName": "Sunk",
+        "canonical": "#eef1f3",
+        "cssVar": "--sunk",
+        "dark": "#222a30",
+        "tonalRamp": [
+          "#303031",
+          "#5f6061",
+          "#8f9192",
+          "#bec1c2",
+          "#f1f4f5",
+          "#f6f7f8",
+          "#fafbfb",
+          "#fdfefe"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#9aa5ad",
+        "cssVar": "--rule",
+        "dark": "#3a454d",
+        "tonalRamp": [
+          "#1f2123",
+          "#3e4245",
+          "#5c6368",
+          "#7b848a",
+          "#aeb7bd",
+          "#c7ced2",
+          "#e1e4e6",
+          "#f5f6f7"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d6dbdf",
+        "cssVar": "--hair",
+        "dark": "#2b343b",
+        "tonalRamp": [
+          "#2b2c2d",
+          "#565859",
+          "#808386",
+          "#abafb2",
+          "#dee2e5",
+          "#e8ebed",
+          "#f3f4f5",
+          "#fbfbfc"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#15191c",
+        "cssVar": "--ink",
+        "dark": "#e8ecef",
+        "tonalRamp": [
+          "#040506",
+          "#080a0b",
+          "#0d0f11",
+          "#111416",
+          "#444749",
+          "#7e8082",
+          "#b9babb",
+          "#e8e8e8"
+        ]
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Ink Secondary",
+        "canonical": "#4d565d",
+        "cssVar": "--ink2",
+        "dark": "#a3aeb6",
+        "tonalRamp": [
+          "#0f1113",
+          "#1f2225",
+          "#2e3438",
+          "#3e454a",
+          "#71787d",
+          "#9da2a6",
+          "#caccce",
+          "#edeeef"
+        ]
+      },
+      "glass-fill": {
+        "role": "neutral",
+        "displayName": "Glass Fill",
+        "canonical": "rgba(244, 246, 248, 0.66)",
+        "cssVar": "--glass",
+        "dark": "rgba(30, 36, 41, 0.62)",
+        "tonalRamp": []
+      },
+      "glass-edge": {
+        "role": "neutral",
+        "displayName": "Glass Edge",
+        "canonical": "rgba(255, 255, 255, 0.75)",
+        "cssVar": "--glass-edge",
+        "dark": "rgba(255, 255, 255, 0.10)",
+        "tonalRamp": []
+      },
+      "holder-amber": {
+        "role": "secondary",
+        "displayName": "Holder Amber (Request Rejected)",
+        "canonical": "#e39b17",
+        "cssVar": "--amber",
+        "dark": "#f0a92a",
+        "tonalRamp": [
+          "#2d1f05",
+          "#5b3e09",
+          "#885d0e",
+          "#b67c12",
+          "#e9af45",
+          "#f0c87f",
+          "#f7e1b9",
+          "#fcf5e8"
+        ]
+      },
+      "on-amber": {
+        "role": "secondary",
+        "displayName": "On Amber",
+        "canonical": "#15191c",
+        "cssVar": "--on-amber",
+        "dark": "#101417",
+        "tonalRamp": [
+          "#040506",
+          "#080a0b",
+          "#0d0f11",
+          "#111416",
+          "#444749",
+          "#7e8082",
+          "#b9babb",
+          "#e8e8e8"
+        ]
+      },
+      "holder-violet": {
+        "role": "secondary",
+        "displayName": "Holder Violet (Emulator Gap)",
+        "canonical": "#6a4fb3",
+        "cssVar": "--violet",
+        "dark": "#8c74e0",
+        "tonalRamp": [
+          "#151024",
+          "#2a2048",
+          "#402f6b",
+          "#553f8f",
+          "#8872c2",
+          "#ad9ed5",
+          "#d2cae8",
+          "#f0edf7"
+        ]
+      },
+      "on-violet": {
+        "role": "secondary",
+        "displayName": "On Violet",
+        "canonical": "#ffffff",
+        "cssVar": "--on-violet",
+        "dark": "#101417",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "holder-slate": {
+        "role": "secondary",
+        "displayName": "Holder Slate (Unclear)",
+        "canonical": "#5c646b",
+        "cssVar": "--slate",
+        "dark": "#8a959e",
+        "tonalRamp": [
+          "#121415",
+          "#25282b",
+          "#373c40",
+          "#4a5056",
+          "#7d8389",
+          "#a5aaae",
+          "#ced0d3",
+          "#eff0f0"
+        ]
+      },
+      "on-slate": {
+        "role": "secondary",
+        "displayName": "On Slate",
+        "canonical": "#ffffff",
+        "cssVar": "--on-slate",
+        "dark": "#101417",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "holder-ok": {
+        "role": "secondary",
+        "displayName": "Holder OK",
+        "canonical": "#ffffff",
+        "cssVar": "--ok",
+        "dark": "#1b2126",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "on-ok": {
+        "role": "secondary",
+        "displayName": "On OK",
+        "canonical": "#15191c",
+        "cssVar": "--on-ok",
+        "dark": "#e8ecef",
+        "tonalRamp": [
+          "#040506",
+          "#080a0b",
+          "#0d0f11",
+          "#111416",
+          "#444749",
+          "#7e8082",
+          "#b9babb",
+          "#e8e8e8"
+        ]
+      },
+      "alert-red": {
+        "role": "tertiary",
+        "displayName": "Alert Red",
+        "canonical": "#b8321e",
+        "cssVar": "--red",
+        "dark": "#f2735f",
+        "tonalRamp": [
+          "#250a06",
+          "#4a140c",
+          "#6e1e12",
+          "#932818",
+          "#c65b4b",
+          "#d88e83",
+          "#eac2bc",
+          "#f8eae8"
+        ]
+      },
+      "link-blue": {
+        "role": "tertiary",
+        "displayName": "Link Blue",
+        "canonical": "#1f56c9",
+        "cssVar": "--link",
+        "dark": "#8eb1ff",
+        "tonalRamp": [
+          "#061128",
+          "#0c2250",
+          "#133479",
+          "#1945a1",
+          "#4c78d4",
+          "#84a2e1",
+          "#bcccef",
+          "#e9eefa"
+        ]
+      },
+      "focus-blue": {
+        "role": "tertiary",
+        "displayName": "Focus Blue",
+        "canonical": "#1f56c9",
+        "cssVar": "--focus",
+        "dark": "#8eb1ff",
+        "tonalRamp": [
+          "#061128",
+          "#0c2250",
+          "#133479",
+          "#1945a1",
+          "#4c78d4",
+          "#84a2e1",
+          "#bcccef",
+          "#e9eefa"
+        ]
+      },
+      "ink-capsule": {
+        "role": "primary",
+        "displayName": "Ink Capsule",
+        "canonical": "#15191c",
+        "cssVar": "--cap",
+        "dark": "#e8ecef",
+        "tonalRamp": [
+          "#040506",
+          "#080a0b",
+          "#0d0f11",
+          "#111416",
+          "#444749",
+          "#7e8082",
+          "#b9babb",
+          "#e8e8e8"
+        ]
+      },
+      "on-capsule": {
+        "role": "primary",
+        "displayName": "On Capsule",
+        "canonical": "#ffffff",
+        "cssVar": "--on-cap",
+        "dark": "#101417",
+        "tonalRamp": [
+          "#333333",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "selection-wash": {
+        "role": "tertiary",
+        "displayName": "Selection Wash",
+        "canonical": "rgba(31, 86, 201, 0.10)",
+        "cssVar": "--sel",
+        "dark": "rgba(142, 177, 255, 0.14)",
+        "tonalRamp": []
+      }
+    },
+    "typographyMeta": {
+      "error-display": {
+        "displayName": "Error Display",
+        "purpose": "The error code at the top of the call detail; largest text in the product."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel and dialog headings (17/24 in dialogs)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All interface text, tabular figures."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Table headers, evidence headings, meta lines, hints."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Secondary line inside a strip field."
+      },
+      "holder-mark": {
+        "displayName": "Holder Mark",
+        "purpose": "The Verdict letter in a holder block."
+      },
+      "mono-body": {
+        "displayName": "Mono Body",
+        "purpose": "Error messages and copyable values."
+      },
+      "mono-small": {
+        "displayName": "Mono Small",
+        "purpose": "Times, durations, IDs, field names, request and response bodies."
+      }
+    },
+    "shadows": [
+      {
+        "name": "glass-shade",
+        "value": "inset 0 1px 0 var(--glass-edge), 0 10px 30px rgba(20, 30, 40, 0.14)",
+        "dark": "inset 0 1px 0 var(--glass-edge), 0 10px 30px rgba(0, 0, 0, 0.45)",
+        "purpose": "Every glass control and navigation element."
+      },
+      {
+        "name": "pulled-strip",
+        "value": "0 6px 16px rgba(0, 0, 0, .18)",
+        "purpose": "The selected strip only."
+      },
+      {
+        "name": "dialog",
+        "value": "0 24px 60px rgba(0, 0, 0, .3)",
+        "purpose": "Modal dialogs, over a rgba(10, 14, 18, .45) backdrop."
+      }
+    ],
+    "materials": [
+      {
+        "name": "liquid-glass",
+        "value": "background: var(--glass); border: 1px solid var(--glass-edge); backdrop-filter: blur(22px) saturate(180%)",
+        "fallback": "background: var(--sunk); backdrop-filter: none under prefers-reduced-transparency: reduce, prefers-contrast: more, or no backdrop-filter support",
+        "purpose": "Floating controls and navigation only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "strip-pull",
+        "value": "transform 160ms cubic-bezier(.2, .8, .2, 1), box-shadow 160ms",
+        "purpose": "The selected strip sliding 12 px out of the rack; removed under prefers-reduced-motion."
+      }
+    ],
+    "focus": {
+      "value": "outline: 2px solid var(--focus); outline-offset: 2px",
+      "purpose": "Global focus-visible ring; dividers widen to a 3 px focus-blue line."
+    },
+    "theming": {
+      "mode": "prefers-color-scheme with :root[data-theme=light|dark] override"
+    },
+    "breakpoints": [
+      {
+        "name": "three-pane",
+        "value": "1700px",
+        "purpose": "List, detail and request/response panes."
+      },
+      {
+        "name": "two-pane",
+        "value": "1100px",
+        "purpose": "1100-1699 px: list and detail; request and response inline."
+      },
+      {
+        "name": "rail",
+        "value": "640px",
+        "purpose": "640-1099 px: one pane with Back, 64 px icon rail."
+      },
+      {
+        "name": "compact",
+        "value": "320px",
+        "purpose": "Below 640 px: one column down to 320 px, top bar with Menu."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid ink capsule fill; one primary action per group.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Send</button>",
+      "css": ".ds-btn{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--rule,#9aa5ad);background:var(--surface,#fff);color:var(--ink,#15191c);font:600 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.ds-btn:hover{border-color:var(--ink2,#4d565d)}.ds-btn:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}.ds-btn-primary{background:var(--cap,#15191c);color:var(--on-cap,#fff);border-color:var(--cap,#15191c)}"
+    },
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Surface fill, rule border; border darkens on hover, sunk when pressed.",
+      "html": "<button class=\"ds-btn-default\">Scan all</button>",
+      "css": ".ds-btn-default{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--rule,#9aa5ad);background:var(--surface,#fff);color:var(--ink,#15191c);font:600 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-btn-default:hover{border-color:var(--ink2,#4d565d)}.ds-btn-default:active{background:var(--sunk,#eef1f3)}.ds-btn-default:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action: red text on a default button, never primary, always confirmed.",
+      "html": "<button class=\"ds-btn-danger\">Delete bucket</button>",
+      "css": ".ds-btn-danger{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--rule,#9aa5ad);background:var(--surface,#fff);color:var(--red,#b8321e);font:600 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-btn-danger:hover{border-color:var(--ink2,#4d565d)}.ds-btn-danger:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}"
+    },
+    {
+      "name": "Glass Toolbar Capsule",
+      "kind": "custom",
+      "refersTo": "capsule-glass",
+      "description": "Floating toolbar control in Liquid Glass; solid fallback for reduced transparency.",
+      "html": "<button class=\"ds-capsule\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"6\"/><path d=\"M20 20l-4.5-4.5\"/></svg>Find a service or operation</button>",
+      "css": ".ds-capsule{height:40px;border-radius:999px;padding:8px 14px;display:inline-flex;align-items:center;gap:8px;color:var(--ink2,#4d565d);font:13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer;background:var(--glass,rgba(244,246,248,.66));border:1px solid var(--glass-edge,rgba(255,255,255,.75));-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge,rgba(255,255,255,.75)),0 10px 30px rgba(20,30,40,.14)}.ds-capsule:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){.ds-capsule{background:var(--sunk,#eef1f3);-webkit-backdrop-filter:none;backdrop-filter:none}}"
+    },
+    {
+      "name": "Filter Chips",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Capsule chips in a filter bar; pressed is the ink capsule.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Failed <span>4</span></button><button class=\"ds-chip\" aria-pressed=\"false\">All <span>12</span></button></div>",
+      "css": ".ds-chips{display:flex;gap:4px}.ds-chip{height:32px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:var(--ink,#15191c);font:500 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-chip span{opacity:.7;margin-left:4px}.ds-chip:hover{background:var(--sel,rgba(31,86,201,.1))}.ds-chip[aria-pressed=true]{background:var(--cap,#15191c);color:var(--on-cap,#fff)}.ds-chip:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented",
+      "description": "Solid in-content toggle; never glass.",
+      "html": "<div class=\"ds-seg\" role=\"group\"><button aria-pressed=\"true\">Fields</button><button aria-pressed=\"false\">JSON</button></div>",
+      "css": ".ds-seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--sunk,#eef1f3);border:1px solid var(--hair,#d6dbdf)}.ds-seg button{height:30px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--ink,#15191c);font:500 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-seg button[aria-pressed=true]{background:var(--cap,#15191c);color:var(--on-cap,#fff)}.ds-seg button:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Surface input with a mono API-member label.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-pk\">orderId</label><input id=\"ds-pk\" value=\"o-1042\"></div>",
+      "css": ".ds-field{display:grid;gap:4px;font:13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}.ds-field label{font:600 12px/18px ui-monospace,'SF Mono',Menlo,monospace;color:var(--ink,#15191c)}.ds-field input{border:1px solid var(--rule,#9aa5ad);background:var(--surface,#fff);color:var(--ink,#15191c);border-radius:8px;padding:8px 10px;font:inherit}.ds-field input:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}.ds-field input[aria-invalid=true]{border-color:var(--red,#b8321e)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-current",
+      "description": "Glass sidebar; current page is the ink capsule.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Calls</a><a href=\"#\">Services</a><a href=\"#\">Setup</a></nav>",
+      "css": ".ds-nav{display:grid;gap:2px;padding:14px 10px;border-radius:18px;width:200px;background:var(--glass,rgba(244,246,248,.66));border:1px solid var(--glass-edge,rgba(255,255,255,.75));-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge,rgba(255,255,255,.75)),0 10px 30px rgba(20,30,40,.14);font:500 13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}.ds-nav a{display:flex;align-items:center;height:36px;padding:0 10px;border-radius:10px;color:var(--ink,#15191c);text-decoration:none}.ds-nav a:hover{background:var(--sel,rgba(31,86,201,.1))}.ds-nav a[aria-current=page]{background:var(--cap,#15191c);color:var(--on-cap,#fff);font-weight:600}.ds-nav a:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}"
+    },
+    {
+      "name": "Flight Strip",
+      "kind": "card",
+      "refersTo": "strip",
+      "description": "A Call in the bay: holder block, hairline-ruled fields; selected strip is pulled 12 px right.",
+      "html": "<div class=\"ds-strips\"><a class=\"ds-strip\" href=\"#\"><span class=\"ds-h ds-h-R\">R</span><span class=\"ds-t\">14:05:21</span><span><b>CreateStateMachine</b><small>states</small></span><span class=\"ds-st\">400<small>InvalidDefinition</small></span><span class=\"ds-t\">38 ms</span></a><a class=\"ds-strip\" href=\"#\" aria-current=\"true\"><span class=\"ds-h ds-h-G\">G</span><span class=\"ds-t\">14:05:19</span><span><b>DescribeBudget</b><small>budgets</small></span><span class=\"ds-st\">501<small>NotImplemented</small></span><span class=\"ds-t\">4 ms</span></a><a class=\"ds-strip\" href=\"#\"><span class=\"ds-h ds-h-OK\">OK</span><span class=\"ds-t\">14:05:12</span><span><b>PutObject</b><small>s3</small></span><span class=\"ds-st\">200<small>OK</small></span><span class=\"ds-t\">12 ms</span></a><div class=\"ds-marker\"><b>Marker</b> 14:02 · Calls above came after it</div></div>",
+      "css": ".ds-strips{display:grid;gap:4px;padding:12px 24px 12px 12px;background:var(--bay,#d9dee2);font:13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums}.ds-strip{display:grid;grid-template-columns:44px 74px minmax(0,1fr) minmax(0,1fr) 60px;min-height:54px;background:var(--strip,#fff);border:1px solid var(--rule,#9aa5ad);border-radius:6px;overflow:hidden;color:var(--ink,#15191c);text-decoration:none;transition:transform 160ms cubic-bezier(.2,.8,.2,1),box-shadow 160ms}.ds-strip:hover{border-color:var(--ink2,#4d565d)}.ds-strip:focus-visible{outline:2px solid var(--focus,#1f56c9);outline-offset:2px}.ds-strip[aria-current=true]{transform:translateX(12px);border:2px solid var(--ink,#15191c);box-shadow:0 6px 16px rgba(0,0,0,.18)}.ds-strip>span{padding:8px 10px;border-left:1px solid var(--hair,#d6dbdf);min-width:0}.ds-strip>.ds-h{border-left:0;border-right:1px solid var(--rule,#9aa5ad);padding:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;letter-spacing:.02em}.ds-h-R{background:var(--amber,#e39b17);color:var(--on-amber,#15191c)}.ds-h-G{background:var(--violet,#6a4fb3);color:var(--on-violet,#fff)}.ds-h-U{background:var(--slate,#5c646b);color:var(--on-slate,#fff)}.ds-h-OK{background:var(--ok,#fff);color:var(--on-ok,#15191c);font-size:12px!important}.ds-t{font:12px/18px ui-monospace,'SF Mono',Menlo,monospace;white-space:nowrap}.ds-strip b{display:block;font:600 13px/18px ui-monospace,'SF Mono',Menlo,monospace}.ds-strip small{display:block;font-size:11px;line-height:16px;color:var(--ink2,#4d565d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-st{font-weight:600}.ds-marker{display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:6px;border:1px dashed var(--ink2,#4d565d);color:var(--ink,#15191c);font-size:12px;font-weight:600}.ds-marker b{background:var(--cap,#15191c);color:var(--on-cap,#fff);padding:0 8px;border-radius:4px}@media (prefers-reduced-motion:reduce){.ds-strip{transition:none}}"
+    },
+    {
+      "name": "Verdict Strip",
+      "kind": "custom",
+      "refersTo": "holder-rejected",
+      "description": "The holder beside the Verdict name and reason in the call detail.",
+      "html": "<div class=\"ds-verdict\"><span class=\"ds-vh\">R</span><div><b>Request Rejected</b><p>Step Functions defines this error for CreateStateMachine, so it reads as a refused request.</p></div></div>",
+      "css": ".ds-verdict{display:grid;grid-template-columns:44px minmax(0,1fr);border:1px solid var(--rule,#9aa5ad);border-radius:8px;overflow:hidden;background:var(--strip,#fff);color:var(--ink,#15191c);font:13px/20px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}.ds-verdict>div{padding:10px 14px}.ds-verdict b{display:block;font-size:14px}.ds-verdict p{margin:0}.ds-vh{display:flex;align-items:center;justify-content:center;background:var(--amber,#e39b17);color:var(--on-amber,#15191c);font-weight:800;font-size:15px;border-right:1px solid var(--rule,#9aa5ad)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Flight Strips",
+    "overview": "**Creative North Star: \"Flight Strips\"**\n\nEvery Call the Emulator receives is a printed flight progress strip racked in a bay. The bay is steel grey; the strips are white, hairline-ruled into fields (time, operation, outcome, duration). At the head of each strip sits a solid square holder block that names the call's Verdict before a word is read: amber R for Request Rejected, violet G for Emulator Gap, slate ? for Unclear, neutral OK for a success. The strip being worked is pulled out of the rack, 12 px to the right, with a heavier ink edge and a lifted shadow. A dashed Marker strip sits in the rack where the Developer set a Marker, so later Calls stack above it.\n\nThe interface is dense, quiet and operational: 13 px system sans with tabular figures, monospace reserved for the things a Developer would copy (API names, times, IDs, bodies). Colour is spent almost entirely on holders; everything else is ink on white or steel. Floating controls and navigation are frosted Liquid Glass over the bay, following Apple's Human Interface Guidelines for behaviour (see docs/design/hig-application.md) while the product keeps its own name, palette and type. Content panes are always solid. The primary action and any selection are a solid ink capsule, inverted to pale ink in dark mode.\n\nLight and dark follow the system setting, with a `data-theme=\"light\"` or `data-theme=\"dark\"` override on the root.",
+    "keyCharacteristics": [
+      "Calls are strips in a bay, not rows in a table with status pills.",
+      "The Verdict lives in a solid square holder block at the strip's head; colour is always paired with a letter.",
+      "Glass for floating controls and navigation only; content is solid.",
+      "Ink capsule for primary action and selection, in every control family.",
+      "Sans for interface, mono only for API names, times, IDs and bodies."
+    ],
+    "rules": [
+      {
+        "name": "The Holder Carries the Colour Rule",
+        "body": "Saturated hue is reserved for Verdict holders. Panels, buttons and backgrounds stay neutral, so a glance down the bay reads only the Verdicts.",
+        "section": "colors"
+      },
+      {
+        "name": "The Letter With the Colour Rule",
+        "body": "Every holder prints its letter (R, G, ?, OK). Colour never carries the Verdict alone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Copyable Is Mono Rule",
+        "body": "Monospace marks what a Developer would copy into code: API and operation names, times, IDs, ARNs, bodies, member names. Prose, labels and buttons are never mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glass Is for Controls Rule",
+        "body": "Liquid Glass (blur 22 px, saturate 180%) is used only on floating controls and navigation: the sidebar, the toolbar capsules, the sticky Calls filter bar and page-level navigation tabs. It is never used on content. At rest no glass element overlaps another control or content; content passes under glass only when scrolled, and the selection is never left under it (the bay keeps a 64 px scroll padding under the filter bar).",
+        "section": "elevation"
+      },
+      {
+        "name": "The Solid Fallback Rule",
+        "body": "Glass falls back to solid `sunk` with no blur under `prefers-reduced-transparency: reduce`, `prefers-contrast: more`, or when the browser lacks backdrop-filter.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do show every Call as a strip with its holder block at the head, letter always printed.",
+      "Do pull the selected strip 12 px right with a 2 px ink border and the pulled-strip shadow, and keep it in view, never under the filter bar.",
+      "Do use the solid ink capsule for the primary action and every selection (nav item, tab, chip, segment, list pick), inverted in dark mode.",
+      "Do keep glass on floating controls and navigation only, and fall back to solid sunk for reduced transparency, increased contrast or no backdrop-filter.",
+      "Do use the solid segmented control for toggles inside content.",
+      "Do set API names, times, IDs and bodies in system mono, and everything else in system sans with tabular figures.",
+      "Do follow the system light/dark setting and honour a `data-theme` override."
+    ],
+    "donts": [
+      "Don't render Calls as a grey table with coloured status pills.",
+      "Don't put glass on content panes, strips, cards or dialogs, or let a glass element overlap another control at rest.",
+      "Don't make a destructive action the primary button; it stays a red-text default button behind a confirming dialog.",
+      "Don't spend saturated colour outside the Verdict holders; alert red is text and borders only.",
+      "Don't let colour carry a Verdict without its letter."
+    ]
+  }
+}

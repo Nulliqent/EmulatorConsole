@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emulator Console</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='3' width='14' height='10' rx='2' fill='%2315191c'/%3E%3Crect x='1' y='3' width='4' height='10' rx='1' fill='%23e39b17'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+  <nav class="side glass" aria-label="Main" id="side">
+    <div class="brand"><b>Emulator Console</b><span>for AWS Emulator</span></div>
+    <button class="btn ghost menubtn" id="menubtn" aria-expanded="false" aria-controls="side">Menu</button>
+    <div class="nav" id="nav"></div>
+    <p class="foot">Not affiliated with AWS.</p>
+  </nav>
+  <div class="col">
+    <header class="toolbar" aria-label="Toolbar">
+      <button class="capsule glass findbtn" id="findbtn"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Find a service or operation<kbd id="findkbd">⌘K</kbd></button>
+      <span class="grow"></span>
+      <label class="capsule glass regioncap"><span class="sr">Active Region</span><select class="region" id="region"><option>us-east-1</option><option>us-west-2</option><option>eu-west-1</option><option>ap-southeast-1</option></select><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></label>
+      <span class="capsule glass conn" id="conn"><span><span class="cl">Connected</span><span class="ca"> · 127.0.0.1:9297</span></span></span>
+      <button class="capsule primary" id="markerbtn">Set a Marker</button>
+    </header>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <main id="main" tabindex="-1"></main>
+  </div>
+</div>
+<dialog id="find" aria-label="Find">
+  <div class="dlg"><input id="findq" placeholder="Find a service or operation" aria-label="Find a service or operation" autocomplete="off"><ul id="findres" role="listbox" aria-label="Results"></ul></div>
+</dialog>
+<dialog id="confirm" aria-labelledby="cft">
+  <div class="dlg"><h2 id="cft"></h2><p id="cfb" class="muted" style="margin-top:6px"></p><dl class="kv" id="cfk" style="margin-top:12px"></dl>
+  <div class="row"><button class="btn" id="cfno" autofocus>Cancel</button><button class="btn danger" id="cfyes"></button></div></div>
+</dialog>
+<div class="sr" aria-live="polite" id="say"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

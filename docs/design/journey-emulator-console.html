@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Emulator Console journeys</title><style>
+:root {
+  --bg: #fafafc; --surface: #ffffff; --fg: #18182b; --fg-muted: #65657a;
+  --border: #d8d8e4; --accent: #4338ca;
+  --sans: "Hanken Grotesk", Inter, system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s7: 32px; --s8: 48px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18182b; --surface: #1f1f36; --fg: #f0f0f8; --fg-muted: #8888a8;
+    --border: #2a2a44; --accent: #7c6ff0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18182b; --surface: #1f1f36; --fg: #f0f0f8; --fg-muted: #8888a8;
+  --border: #2a2a44; --accent: #7c6ff0;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: var(--sans); background: var(--bg); color: var(--fg);
+  padding: var(--s7); line-height: 1.5; margin: 0;
+}
+.visual-diagram {
+  margin: 0; padding: var(--s5);
+  background: var(--surface); border-radius: 8px;
+  border: 1px solid var(--border); overflow-x: auto;
+}
+.visual-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: var(--fg-muted); letter-spacing: 0.06em;
+  margin-bottom: var(--s4); text-transform: uppercase;
+}
+.flow-grid {
+  display: grid;
+  grid-template-columns: auto 16px 1fr 16px 1fr 16px 1fr 16px 1fr 16px 1fr;
+  align-items: center; padding: var(--s3) 0; row-gap: var(--s2);
+}
+.flow-node {
+  padding: var(--s2); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 4px;
+  text-align: center; min-width: 0;
+}
+.flow-node-step { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--accent); margin-bottom: 1px; }
+.flow-node-label { font-size: 11px; font-weight: 600; color: var(--fg); }
+.flow-node-detail { font-size: 10px; color: var(--fg-muted); margin-top: 1px; }
+.flow-node-icon { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--accent); }
+.flow-start { border-color: var(--accent); border-width: 2px; padding: var(--s2) var(--s3); }
+.flow-end { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
+.flow-arrow { height: 1px; background: var(--border); position: relative; }
+.flow-arrow::after {
+  content: ''; position: absolute; right: 0; top: -3px;
+  border-left: 4px solid var(--border);
+  border-top: 3px solid transparent; border-bottom: 3px solid transparent;
+}
+.flow-gate { text-align: center; padding-top: var(--s1); }
+.flow-gate-connector { width: 1px; height: 10px; background: var(--border); margin: 0 auto; }
+.flow-gate-diamond {
+  width: 10px; height: 10px; background: var(--surface);
+  border: 1px solid var(--border);
+  transform: rotate(45deg); margin: 0 auto 4px;
+}
+.flow-gate-label { font-size: 10px; font-weight: 600; color: var(--fg-muted); }
+.flow-gate-action { font-size: 10px; color: var(--fg-muted); opacity: 0.6; }
+.flow-metric { margin-top: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--border); font-size: 11px; }
+.flow-metric-value { font-weight: 600; color: var(--accent); }
+.flow-metric-label { color: var(--fg-muted); }
+main { max-width: 1180px; margin: 0 auto; }
+h2 { font-size: 18px; margin: var(--s7) 0 var(--s3); } h2:first-child { margin-top: 0; }
+h3 { font-size: 15px; margin: var(--s6) 0 var(--s2); } h4 { font-size: 14px; margin: var(--s4) 0 0; }
+p, li { font-size: 14px; max-width: 76ch; } h4 + p { margin-top: var(--s1); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; vertical-align: top; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); }
+th { color: var(--fg-muted); } a { color: var(--accent); }
+.flow-grid { min-width: 720px; }
+</style></head><body><main><h2>Problem Statement</h2><p>Six tasks, from opening the Console to closing the question that opened it: connect, explain a failed call, reach any service, send an operation, see what a run created, and carry on after the Emulator restarts. Why they matter is in the <a href="brief-emulator-console.md">brief</a>.</p>
+<h2>User Context &amp; Variations</h2><ul>
+<li><strong>No Gateway.</strong> There are no Calls. Services, Operations and Markers work in full; Current run and Calls lead to Gateway setup.</li>
+<li><strong>Arriving from a failed test.</strong> The Developer has an error name or a time. Calls opens newest first, and its filter takes an error name, an operation or a status.</li>
+<li><strong>A Curated Service.</strong> Resources holds pages made for that service, with its test actions, delete and purge. Every other service's lists are read-only.</li>
+<li><strong>Beside an editor at 640 px.</strong> One pane at a time. Opening a Call replaces the list, and going back returns to the same row.</li>
+</ul><h2>Screen-by-Screen Flow</h2>
+<h3>Connect</h3><div class="visual-diagram"><div class="visual-label">Flow: Connect</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">Console opens</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Connection</div><div class="flow-node-detail">address and keys</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Current run</div><div class="flow-node-detail">no Calls yet</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Gateway</div><div class="flow-node-detail">recording explained</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">First Call</div><div class="flow-node-detail">arrives</div></div><div class="flow-gate" style="grid-column: 3; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Cannot connect?</div><div class="flow-gate-action">reason and fix</div></div><div class="flow-gate" style="grid-column: 7; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Skip Gateway?</div><div class="flow-gate-action">Services still work</div></div></div></div>
+<h4>Setup: Connection</h4><p>It exists because nothing else works until the Emulator answers. The Console reads the address and keys it was started with and tries once on open. Success moves on by itself. Failure names which of three things failed, reaching the address, trusting the certificate or reading the keys, with the command that fixes it and Try again.</p>
+<h4>Current run</h4><p>It says whether anything has happened. With no Calls it offers Gateway setup and Services side by side, neither blocking the other.</p>
+<h4>Setup: Gateway</h4><p>It exists because recording must be understood before it starts. It states what is recorded, then gives the endpoint line for the SDK. The page waits and reports the first Call when one arrives. A browser-originated request is refused, and the page says so.</p>
+<h3>Explain a failed call</h3><div class="visual-diagram"><div class="visual-label">Flow: Explain a failed call</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">SDK error</div><div class="flow-node-detail">in the terminal</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Calls</div><div class="flow-node-detail">newest first</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Call</div><div class="flow-node-detail">error and Verdict</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Request, response</div><div class="flow-node-detail">the evidence</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">Cause known</div><div class="flow-node-detail">or Unclear</div></div><div class="flow-gate" style="grid-column: 3; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Not listed?</div><div class="flow-gate-action">went past the Gateway</div></div><div class="flow-gate" style="grid-column: 5; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Emulator Gap?</div><div class="flow-gate-action">stop looking</div></div></div></div>
+<h4>Calls</h4><p>It exists to find one request. Failed Calls are one filter away, and from Current run one step. A Call that is not listed may have gone straight to the Emulator, including through a URL the Emulator returned; the page says so and links to Gateway setup.</p>
+<h4>Call</h4><p>It exists to separate the Developer's mistake from the Emulator's. The error as received comes first, then the Verdict with the evidence it rests on, then the request and response. Request Rejected leads to the input. Emulator Gap, given for 501, for UnknownService, and for InvalidAction naming an operation the model defines, leads to the operation, which carries the same label. Unclear says which evidence is missing and leads to the request and response. Bodies cut at 256 KB say so.</p>
+<h4>From a Call to a retry</h4><p>Open in operation form carries the same input, and the Developer edits and sends it. The result is a sent operation and not a Call, so it never changes the list being examined.</p>
+<h3>Reach any service</h3><div class="visual-diagram"><div class="visual-label">Flow: Reach any service</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">A service name</div><div class="flow-node-detail">or operation</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Find</div><div class="flow-node-detail">from any page</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Service</div><div class="flow-node-detail">opens on Resources</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Resource</div><div class="flow-node-detail">its details</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">Answer</div><div class="flow-node-detail">or its Calls</div></div><div class="flow-gate" style="grid-column: 3; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">No match?</div><div class="flow-gate-action">closest names, A–Z</div></div><div class="flow-gate" style="grid-column: 5; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">No list?</div><div class="flow-gate-action">opens on Operations</div></div></div></div>
+<h4>Find</h4><p>It exists because 436 services cannot be scanned. A service name leads to the service; an operation name leads to its form.</p>
+<h4>Service: Resources</h4><p>It exists to show what is there. Each list the model offers is one choice, and only the one chosen is read. Past seven, the choices become a list that can be filtered. Four endings look different: resources, none in this Region, not implemented, and could not be read. None in this Region names other Regions where Calls were seen.</p>
+<h4>Service without a list</h4><p>It opens on Operations, and Resources says which input its lists need and leads to those operations.</p>
+<h4>Resource</h4><p>It exists to show everything returned for one item. Details come from a matching describe or get operation when there is exactly one; otherwise the fields from the list are shown, and the page says so. Calls that name the resource are one step away.</p>
+<h3>Send an operation</h3><div class="visual-diagram"><div class="visual-label">Flow: Send an operation</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">Operations</div><div class="flow-node-detail">of one service</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Operation form</div><div class="flow-node-detail">required first</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Check</div><div class="flow-node-detail">before sending</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Response</div><div class="flow-node-detail">status and body</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">Done</div><div class="flow-node-detail">or edit and resend</div></div><div class="flow-gate" style="grid-column: 3; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Not implemented?</div><div class="flow-gate-action">may still be sent</div></div><div class="flow-gate" style="grid-column: 5; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Destructive?</div><div class="flow-gate-action">confirm by name</div></div></div></div>
+<h4>Operations</h4><p>It exists to show what a service can do and what the Emulator lacks. Unimplemented operations stay listed and labelled.</p>
+<h4>Operation form</h4><p>It exists to make a valid request without reading the API reference. Required fields come first and optional fields open on request. Fields and JSON are two views of one input. An input that breaks the model is marked and can still be sent, because seeing the Emulator's refusal is sometimes the point.</p>
+<h4>Confirm</h4><p>It exists only for Destructive Operations. It names the operation, the resource and the Region. A single delete takes one confirmation; purging names the count where the service gives one.</p>
+<h4>Response</h4><p>It exists to show what came back, unchanged. The same Verdicts apply here as on a Call. The input stays for editing.</p>
+<h3>See what a run created</h3><div class="visual-diagram"><div class="visual-label">Flow: See what a run created</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">Set a Marker</div><div class="flow-node-detail">any page</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Run the code</div><div class="flow-node-detail">outside the Console</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Markers</div><div class="flow-node-detail">latest first</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Marker</div><div class="flow-node-detail">added, removed</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">Resource</div><div class="flow-node-detail">its page</div></div><div class="flow-gate" style="grid-column: 7; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Nothing changed?</div><div class="flow-gate-action">says what it compares</div></div></div></div>
+<h4>Set a Marker</h4><p>It reads the top-level resources of the Curated Services in the Active Region, then confirms with the time. While it reads, it says which service it is on; a service that cannot be read is named and left out.</p>
+<h4>Marker</h4><p>It exists to answer what changed. It reads again on opening and on request, and shows added and removed resources by service. It says that it compares the eight Curated Services, in one Region, and not objects, items or messages.</p>
+<h3>After the Emulator restarts</h3><div class="visual-diagram"><div class="visual-label">Flow: After a restart</div><div class="flow-grid"><div class="flow-node flow-start"><div class="flow-node-label">Emulator restarts</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">1</div><div class="flow-node-label">Notice</div><div class="flow-node-detail">on every page</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">2</div><div class="flow-node-label">Current run</div><div class="flow-node-detail">new run begins</div></div><div class="flow-arrow"></div><div class="flow-node"><div class="flow-node-step">3</div><div class="flow-node-label">Calls</div><div class="flow-node-detail">earlier run kept</div></div><div class="flow-arrow"></div><div class="flow-node flow-end"><div class="flow-node-step">4</div><div class="flow-node-label">Continue</div></div><div class="flow-gate" style="grid-column: 3; grid-row: 2;"><div class="flow-gate-connector"></div><div class="flow-gate-diamond"></div><div class="flow-gate-label">Still stopped?</div><div class="flow-gate-action">command and Try again</div></div></div></div>
+<h4>Restart notice</h4><p>It exists so an empty list is not read as a bug. It says resources were lost and the earlier Markers ended. New keys are what shows that a run is new, so the time given is when the Console noticed. When the Emulator is stopped, it shows <code>docker compose restart</code>. Earlier Calls stay under their own run.</p>
+<h2>Interaction Specifications</h2><div class="visual-diagram"><table><thead><tr><th>Moment</th><th>Change</th><th>Timing</th></tr></thead><tbody><tr><td>Filter a list</td><td>Results narrow while typing</td><td>On each keystroke</td></tr><tr><td>Find opens</td><td>Focus enters the field; Escape returns it to where it was</td><td>At once</td></tr><tr><td>Field leaves focus</td><td>Its value is checked against the model</td><td>On leaving; cleared on the next valid keystroke</td></tr><tr><td>Send</td><td>Button says Sending and cannot be pressed twice</td><td>Until the response; Cancel appears after 2 s</td></tr><tr><td>A new Call arrives</td><td>It is added to the list without moving the selected row</td><td>At once; a "new Calls" line appears if the list is scrolled</td></tr><tr><td>A list is read</td><td>Last-read time updates</td><td>On focus, after a relevant write Call, or on Refresh</td></tr><tr><td>Pane edge dragged or moved by arrow keys</td><td>Width is kept for the next visit</td><td>At once</td></tr><tr><td>Delete or purge</td><td>Cannot be undone; the confirmation says so</td><td>Before sending</td></tr><tr><td>Motion</td><td>None is required</td><td>Not applicable</td></tr></tbody></table></div></main></body></html>

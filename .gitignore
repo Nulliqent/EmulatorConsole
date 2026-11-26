@@ -1,0 +1,14 @@
+# Reference clones, read-only
+/aws-emulator/
+/api-models-aws/
+
+# Emulator home: holds the run's credentials
+/.aws/
+
+node_modules/
+dist/
+.DS_Store
+
+# Third-party skills (Intent), kept local
+/.claude/skills/
+/.claude/settings.local.json

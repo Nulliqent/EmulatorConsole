@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Emulator Console site map</title>
+<style>
+:root {
+  --bg: #fafafc; --surface: #ffffff; --fg: #18182b; --fg-muted: #65657a;
+  --border: #d8d8e4; --accent: #4338ca;
+  --sans: "Hanken Grotesk", Inter, system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s7: 32px; --s8: 48px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18182b; --surface: #1f1f36; --fg: #f0f0f8; --fg-muted: #8888a8;
+    --border: #2a2a44; --accent: #7c6ff0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18182b; --surface: #1f1f36; --fg: #f0f0f8; --fg-muted: #8888a8;
+  --border: #2a2a44; --accent: #7c6ff0;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: var(--sans); background: var(--bg); color: var(--fg);
+  padding: var(--s7); line-height: 1.5; margin: 0;
+}
+.visual-diagram {
+  margin: 0; padding: var(--s5);
+  background: var(--surface); border-radius: 8px;
+  border: 1px solid var(--border); overflow-x: auto;
+}
+.visual-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: var(--fg-muted); letter-spacing: 0.06em;
+  margin-bottom: var(--s4); text-transform: uppercase;
+}
+.sitemap-tabbar {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: var(--s2) var(--s3);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: var(--s4);
+}
+.sitemap-tab {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; font-size: 10px; color: var(--fg-muted);
+  padding: var(--s1) var(--s2);
+}
+.sitemap-tab svg { color: var(--fg-muted); }
+.sitemap-tab-active { color: var(--accent); }
+.sitemap-tab-active svg { color: var(--accent); }
+.sitemap-tab-post {
+  background: var(--accent); border-radius: 50%;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.sitemap-tab-post svg { color: white; }
+.sitemap-tree { padding: var(--s2) 0; }
+.sitemap-root { margin-bottom: var(--s3); }
+.sitemap-root .sitemap-node-label {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--fg);
+}
+.sitemap-branches { display: flex; gap: var(--s2); flex-wrap: wrap; }
+.sitemap-branch { flex: 1; min-width: 85px; }
+.sitemap-node {
+  padding: var(--s2); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 11px; font-weight: 600; color: var(--fg);
+  margin-bottom: var(--s2);
+  display: flex; align-items: center; gap: var(--s1);
+}
+.sitemap-node-primary { border-color: var(--accent); border-width: 2px; }
+.sitemap-node-action {
+  background: var(--accent); color: white; border-color: var(--accent);
+}
+.sitemap-node-tag {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--fg-muted); font-weight: 400; margin-left: auto;
+}
+.sitemap-node-action .sitemap-node-tag { color: rgba(255,255,255,0.7); }
+.sitemap-children {
+  padding-left: var(--s3); border-left: 1px dashed var(--border);
+}
+.sitemap-leaf {
+  font-size: 10.5px; color: var(--fg-muted);
+  padding: 2px 0; line-height: 1.4;
+}
+.sitemap-node { flex-wrap: wrap; }
+main { max-width: 1180px; margin: 0 auto; }
+h2 { font-size: 18px; margin: var(--s7) 0 var(--s3); }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 14px; margin: var(--s5) 0 var(--s1); }
+p, li { font-size: 14px; max-width: 76ch; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; vertical-align: top; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--border); }
+th { color: var(--fg-muted); font-weight: 600; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: 12px; }
+@media (max-width: 700px) { body { padding: var(--s4); } }
+</style></head><body><main>
+<h2>Site map</h2>
+<div class="visual-diagram"><div class="visual-label">Information Architecture: Emulator Console</div>
+<div class="sitemap-tree"><div class="sitemap-root"><span class="sitemap-node-label">Emulator Console</span></div><div class="sitemap-branches"><div class="sitemap-branch"><div class="sitemap-node sitemap-node-primary"><span>Current run</span><span class="sitemap-node-tag">default</span></div><div class="sitemap-children"><div class="sitemap-leaf">Emulator and connection</div><div class="sitemap-leaf">Services seen in Calls</div><div class="sitemap-leaf">Failed Calls</div><div class="sitemap-leaf">Latest Marker</div></div></div><div class="sitemap-branch"><div class="sitemap-node "><span>Calls</span></div><div class="sitemap-children"><div class="sitemap-leaf">All Calls, grouped by run</div><div class="sitemap-leaf">Call: request, response, Verdict</div><div class="sitemap-leaf">Link to the service and operation</div></div></div><div class="sitemap-branch"><div class="sitemap-node "><span>Services</span></div><div class="sitemap-children"><div class="sitemap-leaf">Seen this run</div><div class="sitemap-leaf">All services, A–Z</div><div class="sitemap-leaf">Service &rarr; Resources</div><div class="sitemap-leaf">Service &rarr; Operations</div><div class="sitemap-leaf">Service &rarr; Calls</div><div class="sitemap-leaf">Resource</div><div class="sitemap-leaf">Operation form and response</div><div class="sitemap-leaf">Sent operations</div></div></div><div class="sitemap-branch"><div class="sitemap-node "><span>Markers</span></div><div class="sitemap-children"><div class="sitemap-leaf">All Markers, by run</div><div class="sitemap-leaf">Marker: added and removed</div></div></div><div class="sitemap-branch"><div class="sitemap-node "><span>Setup</span></div><div class="sitemap-children"><div class="sitemap-leaf">Connection</div><div class="sitemap-leaf">Gateway</div><div class="sitemap-leaf">What is recorded</div><div class="sitemap-leaf">Clear Calls</div></div></div><div class="sitemap-branch"><div class="sitemap-node sitemap-node-action"><span>Set a Marker</span></div><div class="sitemap-children"><div class="sitemap-leaf">From any page</div></div></div></div></div></div>
+<h3>Cross-links</h3>
+<ul>
+<li>A Call links to its service, its operation's form filled with the same input, and its resource where one can be identified.</li>
+<li>A resource links to the Calls that name it, and to its service's operations.</li>
+<li>A Marker's added resources link to their pages; removed ones link to Calls that name them.</li>
+<li>An empty list links to Calls seen in other Regions when there are any.</li>
+<li>Calls and Current run link to Setup's Gateway page while no Call has been recorded.</li>
+</ul>
+<h3>Structure</h3>
+<div class="visual-diagram"><table><thead><tr><th>Decision</th><th>Reason</th><th>Depends on</th><th>Source</th></tr></thead><tbody><tr><td>Current run is the first page</td><td>It shows failures and what the run touched without reading 436 services.</td><td>Calls (through the Gateway), Markers</td><td><a href="context-emulator-console.md">context</a></td></tr><tr><td>Calls and Services are separate top-level places</td><td>They are the two reasons a Developer opens the Console: a failure, and a resource. Each is one step from every page.</td><td>Gateway for Calls</td><td><a href="brief-emulator-console.md">brief</a></td></tr><tr><td>Every service has the same three pages: Resources, Operations, Calls</td><td>One shape for 436 services. A Curated Service changes what Resources holds, not its address.</td><td>Service Models</td><td><a href="../adr/0005-generated-pages-for-every-service.md">ADR 0005</a></td></tr><tr><td>A service without a list opens on Operations</td><td>71 services have no list that needs no input. Their Resources page stays and says why.</td><td>Service Models</td><td><a href="../adr/0005-generated-pages-for-every-service.md">ADR 0005</a></td></tr><tr><td>No subject categories</td><td>The models hold none, and Developers arrive with a service name.</td><td>Search</td><td><a href="brief-emulator-console.md">brief</a></td></tr><tr><td>Operations belong to their service</td><td>An operation means little apart from its service. Global search reaches one directly.</td><td>Search</td><td><a href="../adr/0005-generated-pages-for-every-service.md">ADR 0005</a></td></tr><tr><td>Set a Marker is available on every page</td><td>A Marker must be set before the code runs, wherever the Developer happens to be.</td><td>Curated Services in the Active Region</td><td><a href="../../GLOSSARY.md">glossary</a></td></tr></tbody></table></div>
+<h2>Navigation specification</h2>
+<p>Global navigation holds five places: Current run, Calls, Services, Markers and Setup. It is on every page, with Find, the Active Region, the connection state and Set a Marker. Within Services, a service's Resources, Operations and Calls form local navigation beneath global navigation.</p>
+<ul>
+<li><strong>Location.</strong> The page title names the item; the path above it names its service. The current place is marked in both levels of navigation.</li>
+<li><strong>Addresses.</strong> Every service, resource, operation, Call and Marker has an address that can be copied. A service's address uses its SDK ID.</li>
+<li><strong>Region.</strong> The Active Region applies to resources and Markers. Calls come from every Region and show their own.</li>
+<li><strong>After a restart.</strong> Current run says state was lost. Earlier Calls stay under their own run; earlier Markers are ended and cannot be compared.</li>
+<li><strong>Narrow windows.</strong> At 640 px one pane shows at a time, and going back returns to the list at the same position. From about 1,100 px a list stays beside its detail; from about 1,700 px the request and response stay open as a third pane. Global navigation collapses to its five icons with names available to keyboard and screen reader users, and Find stays visible.</li>
+</ul>
+<h2>Labeling guide</h2>
+<ul>
+<li><strong>Services</strong> take the title in their Service Model without a leading "AWS" or "Amazon", followed by the SDK ID: "Step Functions · SFN". The SDK ID tells apart services that share a title; where the two are the same, it is shown once. Table rows use the SDK ID alone.</li>
+<li><strong>Operations and fields</strong> keep their exact API names: "ListStateMachines". They match the Developer's code.</li>
+<li><strong>Resource lists</strong> take the noun of the operation that fills them: ListStateMachines becomes "State machines". Where two lists would share a noun, both show the operation name.</li>
+<li><strong>Send</strong> is the verb for an operation. <strong>Run</strong> only ever means an Emulator Run.</li>
+<li><strong>Not implemented</strong> names the Emulator version it describes: "Not implemented in 1.0.509". "Not offered" marks an operation in the model that the Emulator's own list lacks.</li>
+<li><strong>A new place</strong> takes the noun for what a person finds there, in the glossary's words. Containers such as Dashboard, Explorer or Resources never name a top-level place.</li>
+</ul>
+<h2>Search and browse strategy</h2>
+<h3>Search</h3>
+<p>Find is for a name the Developer already has. It matches service titles, SDK IDs, signing names and operation names, and opens from any page with the keyboard. Services rank above operations, and services seen this run rank first. Results show the title and SDK ID together, and unimplemented operations are labelled. Find covers names and not the resources inside services, since that would mean asking all 436.</p>
+<h3>Browse</h3>
+<p>Services seen this run come first: those with Calls, and those opened. The full A–Z list follows, with a filter by name and filters for Curated Services, services with a resource list, and services with every operation implemented. Within a service, operations group by verb and filter by name and implementation.</p>
+<h3>No results</h3>
+<p>Find offers the closest names by spelling, the A–Z list, and, for one of the three modelled services the Emulator lacks, a line saying so.</p>
+</main></body></html>
