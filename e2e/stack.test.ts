@@ -27,7 +27,7 @@ describe("console-e2e stack", () => {
   it("the Console reaches the Emulator's health route over HTTPS with ca.pem", async () => {
     const res = await get("/api/health");
     expect(res.status).toBe(200);
-    expect(JSON.parse(res.body)).toEqual({ emulator: { reachable: true, port: EMULATOR_PORT } });
+    expect(JSON.parse(res.body).emulator).toMatchObject({ reachable: true, port: EMULATOR_PORT });
   });
 
   it("the image ships the Service Model index", async () => {

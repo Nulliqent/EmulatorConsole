@@ -43,6 +43,7 @@ services:
       EMULATOR_HOST: emulator
       EMULATOR_PORT: "${PORT:-9297}" # compose's PORT is the Console's EMULATOR_PORT
       EMULATOR_TLS_SERVERNAME: localhost
+      EMULATOR_DISPLAY_ADDRESS: "127.0.0.1:${PORT:-9297}" # how the Developer reaches it, shown in the UI
       EMULATOR_HOME: /home/console/.aws/emulator
     ports:
       - "127.0.0.1:${CONSOLE_PORT:-9298}:${CONSOLE_PORT:-9298}"

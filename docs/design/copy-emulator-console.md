@@ -67,6 +67,9 @@ Strings already in the wireframes are not repeated. `{name}` marks a value from 
 | Connection, normal | Connected · {address} | |
 | Connection, not answering | Not answering · {address} | A1 |
 | Set a Marker, disabled reason | Can't set a Marker while the Emulator isn't answering. | A1 |
+| Connection, Console not answering | Status unknown | A1 |
+| Set a Marker, disabled reason, Console not answering | Can't set a Marker while the Console isn't answering. | A1 |
+| Connection, first read | Checking the Emulator. | |
 | Skip link | Skip to content | |
 | Hide sidebar / Show sidebar | Hide sidebar · Show sidebar | |
 
@@ -76,7 +79,32 @@ Strings already in the wireframes are not repeated. `{name}` marks a value from 
 |---|---|---|---|---|
 | Below top bar | The Emulator isn't answering | Last answer at {time}. What's on screen may be out of date. | Copy restart command | A1 |
 | Below top bar | The Emulator isn't answering | Last answer at {time}. It may have stopped after a period with no API calls. | Copy start command | A3 |
+| Below top bar | The Console isn't answering | Check that it is running. | Start it with `docker compose up -d` (shown beside the text) | A1 |
 | Below top bar | The Emulator has restarted and its resources were lost | Noticed at {time}. Calls from the earlier run are kept. Its Markers have ended. | Dismiss | A2 |
+
+Before the first answer, a notice's text reads "No answer since the Console started." in place of "Last answer at {time}." The notice shows A3 only when nothing is listening at the Emulator's address; any other silence is A1.
+
+### Connection page
+
+| Where | String | State |
+|---|---|---|
+| Not trusted, no ca.pem | Not trusted: this run's ca.pem isn't there | A1 |
+| Not trusted, other CA | Not trusted: the certificate doesn't chain to this run's ca.pem | A1 |
+| Step not run | Not checked | A1 |
+| Panel heading (visually hidden) | Steps | |
+| Keys missing | Not found: {path} | A1 |
+| Last answer | Last answer at {time}. | A1 |
+| Restart line, stopped Emulator | Start it with: | A3 |
+| Try again, running | Checking… | A1 |
+| Copy button name on the page | Copy restart command from the Connection page · Copy start command from the Connection page | A1, A3 |
+
+### Pages not built yet
+
+| Where | String | State |
+|---|---|---|
+| Placeholder page | This page isn't built yet. | |
+| No page at the address, title | Page not found | |
+| No page at the address, text | There is no page at this address. | |
 
 ### Lists
 

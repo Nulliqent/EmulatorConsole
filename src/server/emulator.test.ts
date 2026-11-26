@@ -77,10 +77,22 @@ describe("checkEmulatorHealth", () => {
     expect(res).toEqual({ reachable: false, port, reason: "no-ca" });
   });
 
+  it("reports refused, not no-ca, when ca.pem is missing and nothing is listening", async () => {
+    const res = await checkEmulatorHealth({ ...configFor(path.join(tmp, "nowhere")), emulatorPort: 1 });
+    expect(res).toEqual({ reachable: false, port: 1, reason: "refused" });
+  });
+
   it("does not trust a certificate from a different CA", async () => {
     status = 200;
     const res = await checkEmulatorHealth(configFor(homeWithCa("b", other.cert)));
-    expect(res).toEqual({ reachable: false, port, reason: "unreachable" });
+    expect(res).toEqual({ reachable: false, port, reason: "untrusted" });
+  });
+
+  it("reports refused when nothing is listening", async () => {
+    const home = path.join(tmp, "d");
+    mkdirSync(path.join(home, "1"), { recursive: true });
+    writeFileSync(path.join(home, "1", "ca.pem"), good.cert);
+    expect(await checkEmulatorHealth({ ...configFor(home), emulatorPort: 1 })).toEqual({ reachable: false, port: 1, reason: "refused" });
   });
 
   it("reports unhealthy on a non-200 answer", async () => {
