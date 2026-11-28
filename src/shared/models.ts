@@ -24,6 +24,8 @@ export type OperationListKind = "list" | "get-or-search";
 
 export type ModelIndexMeta = {
   schemaVersion: number;
+  /** SHA-256 (hex) over every service file's bytes, so the hash of index.json also covers them. */
+  contentHash: string;
   /** The Emulator the implementation labels describe, read from the reference clone at build time. */
   emulator: { version: string; commit: string };
   /** The Service Models the index was built from. */
@@ -92,6 +94,11 @@ export type ServiceSummary = {
    * it is checked per service. Filled whatever `listClass` is, from implemented operations only.
    */
   getOrSearchOperations: string[];
+  /**
+   * List or Describe operations the Emulator implements that return a collection but need input (a required member),
+   * such as Budgets' DescribeBudgets. They cannot be read until the Developer supplies the input.
+   */
+  inputListOperations: string[];
   /** Operations with a member AWS marks sensitive, in their input or output. */
   sensitiveOperations: number;
 };
@@ -111,6 +118,8 @@ export type OperationInfo = {
   paginated: boolean;
   /** Set when the operation lists without input. */
   list?: OperationListKind;
+  /** Set when the operation is a List or Describe that returns a collection but has a required input member. */
+  listNeedsInput?: true;
   implementation: ImplementationLabel;
   /**
    * A summary for display, such as "this operation carries secrets": paths to the members AWS marks sensitive

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
@@ -162,6 +163,7 @@ export function buildModelIndex(opts: BuildOptions): BuildResult {
       listClass: classifyService(kinds),
       listOperations: operations.filter((o) => o.list === "list" && o.implementation === "implemented").map((o) => o.name),
       getOrSearchOperations: operations.filter((o) => o.list === "get-or-search" && o.implementation === "implemented").map((o) => o.name),
+      inputListOperations: operations.filter((o) => o.listNeedsInput && o.implementation === "implemented").map((o) => o.name),
       sensitiveOperations: operations.filter((o) => o.sensitive.input.length + o.sensitive.output.length > 0).length,
     });
 
@@ -189,8 +191,18 @@ export function buildModelIndex(opts: BuildOptions): BuildResult {
   const sum = (f: (s: ServiceSummary) => number) => services.reduce((n, s) => n + f(s), 0);
   const tally = <K extends string>(keys: K[], pick: (s: ServiceSummary) => K) =>
     Object.fromEntries(keys.map((k) => [k, services.filter((s) => pick(s) === k).length])) as Record<K, number>;
+  // Compress first: the hash of the service files goes into meta, so index.json's own hash covers them too.
+  const packedFiles = files.map(({ slug, file }) => ({
+    slug,
+    packed: zlib.brotliCompressSync(Buffer.from(JSON.stringify(file)), {
+      params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9, [zlib.constants.BROTLI_PARAM_LGWIN]: 24 },
+    }),
+  }));
+  const contentHash = createHash("sha256");
+  for (const { slug, packed } of [...packedFiles].sort((a, b) => byCodePoint(a.slug, b.slug))) contentHash.update(slug).update("\0").update(packed);
   const meta: ModelIndexMeta = {
     schemaVersion: SCHEMA_VERSION,
+    contentHash: contentHash.digest("hex"),
     emulator: { version: emulator.version, commit: emulator.commit },
     models: {
       repository: "aws/api-models-aws",
@@ -223,10 +235,7 @@ export function buildModelIndex(opts: BuildOptions): BuildResult {
   fs.rmSync(servicesOut, { recursive: true, force: true });
   fs.mkdirSync(servicesOut, { recursive: true });
   let bytes = 0;
-  for (const { slug, file } of files) {
-    const packed = zlib.brotliCompressSync(Buffer.from(JSON.stringify(file)), {
-      params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9, [zlib.constants.BROTLI_PARAM_LGWIN]: 24 },
-    });
+  for (const { slug, packed } of packedFiles) {
     writeFileAtomic(path.join(servicesOut, serviceFileName(slug)), packed);
     bytes += packed.length;
   }

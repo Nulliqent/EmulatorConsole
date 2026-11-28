@@ -185,3 +185,15 @@
 - Why: 5,000 Calls of two bodies of 256 KB, and the copy "Show" needs, don't fit the Console's 512 MB container. Bodies of all stored Calls together stay within 200 MB; past it the oldest Calls lose their bodies and keep their summaries and headers, and the Calls list says so (C2).
 - Rejected: a smaller body limit, which cuts the bodies of every Call to save a few; refusing new Calls, which loses the latest, the ones being debugged.
 - Rests on: states-emulator-console.md (C2)
+
+## 2026-11-26 · "Not implemented" labels stay a hint, learned at runtime
+- Decided by: the designer
+- Why: the labels come from Emulator 1.0.509, where 7,192 marked stubs answer 501 `NotImplemented`. The Docker image builds the latest LTS (1.0.625 on 2026-11-26), where many of those now work (21 of 31 stub-marked operations probed answered 200 or a real 4xx). The Console can't read the running version, so every label and filter names the version it describes. A 501 `NotImplemented` from a labelled operation confirms the label for the run; any 2xx marks it "Label may be out of date" for the run; a 4xx proves nothing, since stubs with pre-checks can answer 400 or 404.
+- Rejected: pinning the Emulator to 1.0.509, which would lose every fix since then.
+- Rests on: the probe of 31 operations on 1.0.625; issue #6
+
+## 2026-11-26 · Opening Services focuses the h1; the filter keeps focus while typing
+- Decided by: Claude, default
+- Why: the keyboard map says every page load moves focus to the h1, and the states doc's "filter field keeps focus on open" contradicted it. The h1 rule is the agreed one; the edge case's real need is that typing and changing filters never move focus out of the field, and that letters jump through the 436 rows.
+- Rejected: focusing the filter on open, which would break the keyboard map and skip the page heading for screen reader users.
+- Rests on: accessibility-emulator-console.md (keyboard map); states-emulator-console.md (edge case catalog)

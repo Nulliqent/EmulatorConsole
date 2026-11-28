@@ -3,11 +3,16 @@ import { CallStore } from "./calls/store.js";
 import { loadConfig } from "./config.js";
 import { loadCertificate } from "./gateway/certificate.js";
 import { Gateway } from "./gateway/gateway.js";
+import { modelIndex } from "./model-index/index.js";
 import { createMonitorFor } from "./monitor.js";
 
 const config = loadConfig();
 const monitor = createMonitorFor(config);
 monitor.start();
+// Build the operation table Find searches now, so the first search does not wait for it. A failure is retried on use.
+void modelIndex(config.modelIndexDir)
+  .then((index) => index.operationTable())
+  .catch(() => {});
 
 // The Gateway is its own server on its own port, built here from the same config. It records whenever the Console
 // runs, whether or not a browser tab is open. A port in use is a state the Gateway page shows (B1), not a crash.
