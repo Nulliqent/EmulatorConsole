@@ -167,3 +167,14 @@ dialog::backdrop { background: var(--backdrop-dialog); }
   .connection { padding: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; align-items: start; margin-top: 12px; }
+.grid2 h2 { font-size: var(--t-title-size); margin-bottom: 6px; }
+.grid2 .code, .grid2 .acts, .grid2 .meta, .grid2 .inline-status, .grid2 .callout, .grid2 .t, .grid2 .check { margin-top: 10px; }
+.check { display: flex; gap: 8px; align-items: center; }
+.meta { color: var(--ink2); font-size: 0.875rem; }
+.t th[scope="row"] { color: var(--ink); font-weight: 600; font-size: inherit; white-space: nowrap; width: 1%; }
+.inline-status { display: flex; gap: 8px; align-items: flex-start; }
+.inline-status > svg { flex: none; margin-top: 2px; }
+.steps-title { font-size: var(--t-body-size); margin-top: 14px; }
+.steps { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 8px; }

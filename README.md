@@ -44,6 +44,14 @@ API_MODELS_DIR=/path/to/api-models-aws AWS_EMULATOR_DIR=/path/to/aws-emulator np
 
 Both default to `./api-models-aws` and `./aws-emulator`. The Emulator release is read from the tag at the clone's checked-out commit (or pass `--emulator-version`). Routes: `GET /api/services` (all services with counts and labels), `GET /api/service?sdkId=DynamoDB` (one service's operations; `slug=dynamodb` also works) and `GET /api/service/shapes?sdkId=DynamoDB[&operation=PutItem]` (its Smithy shape graph, or the shapes one operation reaches). They carry an ETag. In code, use `modelIndex(config.modelIndexDir)` from `src/server/model-index`.
 
+## The Gateway
+
+The Gateway is optional: point an SDK at `AWS_ENDPOINT_URL=http://127.0.0.1:9300` and each Call is recorded in memory (the Setup page's Gateway tab says what is and isn't kept). It serves plain HTTP and TLS on the same port.
+
+- **It is not access control.** The Gateway checks the Host header (loopback names, `localhost` and `*.localhost` on any port; `GATEWAY_HOSTS=host.docker.internal,...` adds more) and refuses browsers, but anything that can reach the port can send a loopback Host. Compose publishes it on `127.0.0.1` only. Inside the compose network it listens on `0.0.0.0`, so **do not attach other services to that network**: they could reach the Gateway and the Console directly.
+- **Docker on Linux:** use Docker 28 or later. Earlier versions let other machines on the LAN reach a port published on `127.0.0.1` through the host's routing; Docker 28 closes that.
+- **TLS:** URLs the Emulator returns (SQS queue URLs, presigned S3 links) say `https`. The Gateway presents a self-signed certificate for `localhost`, `127.0.0.1` and `::1`; it is not a CA, so trusting it trusts nothing else. It is kept in the `gateway-cert` volume (`GATEWAY_CERT_DIR`), so you trust it once; it is renewed 30 days before it ends (two-year validity). Fetch it from `http://127.0.0.1:9298/api/gateway/certificate`. https to virtual-host bucket names (`bucket.localhost`) is not supported; use path style or plain http.
+
 ## Test it
 
 ```sh

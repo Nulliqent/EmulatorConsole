@@ -21,3 +21,4 @@ function compose(...args: string[]) {
 export const stopEmulator = () => compose("stop", "emulator");
 export const startEmulator = () => compose("start", "emulator");
 export const restartEmulator = () => compose("restart", "emulator");
+export const restartConsole = () => compose("restart", "console");

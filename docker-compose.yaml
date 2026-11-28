@@ -25,6 +25,23 @@ services:
     mem_limit: 2g
     memswap_limit: 2g
 
+  # The Gateway's certificate lives in a named volume so it stays the same across Console restarts and the Developer
+  # trusts it once. A new volume is owned by root; this one-shot step gives it to the user the Console runs as.
+  gateway-cert-init:
+    build:
+      context: .
+      dockerfile: Dockerfile/console.Dockerfile
+    image: emulator-console
+    user: "0:0"
+    command: ["chown", "${HOST_UID:-1000}:${HOST_GID:-1000}", "/gateway-cert"]
+    volumes:
+      - gateway-cert:/gateway-cert
+    restart: "no"
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: ["no-new-privileges:true"]
+
   console:
     build:
       context: .
@@ -36,21 +53,26 @@ services:
     depends_on:
       emulator:
         condition: service_started # the Console shows a stopped Emulator; it must not wait for one
+      gateway-cert-init:
+        condition: service_completed_successfully
     environment:
       CONSOLE_BIND: "0.0.0.0" # inside the container; the published port below is loopback only
       CONSOLE_PORT: "${CONSOLE_PORT:-9298}"
-      GATEWAY_PORT: "${GATEWAY_PORT:-9300}" # reserved; the Gateway comes in a later ticket
+      GATEWAY_PORT: "${GATEWAY_PORT:-9300}" # the Gateway (plain HTTP and TLS); published on 127.0.0.1 only, below
       EMULATOR_HOST: emulator
       EMULATOR_PORT: "${PORT:-9297}" # compose's PORT is the Console's EMULATOR_PORT
       EMULATOR_TLS_SERVERNAME: localhost
       EMULATOR_DISPLAY_ADDRESS: "127.0.0.1:${PORT:-9297}" # how the Developer reaches it, shown in the UI
       EMULATOR_HOME: /home/console/.aws/emulator
+      GATEWAY_CERT_DIR: /gateway-cert # the Gateway's certificate and key, kept in the gateway-cert volume
+      # GATEWAY_HOSTS: host.docker.internal # extra names the Gateway answers to; anything else is refused with 421
     ports:
       - "127.0.0.1:${CONSOLE_PORT:-9298}:${CONSOLE_PORT:-9298}"
       - "127.0.0.1:${GATEWAY_PORT:-9300}:${GATEWAY_PORT:-9300}"
     volumes:
       # Read-only: the Console reads <port>/ca.pem and <port>/emulator_credentials, never writes.
       - ${EMULATOR_HOME:-./.aws/emulator}:/home/console/.aws/emulator:ro
+      - gateway-cert:/gateway-cert
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:${CONSOLE_PORT:-9298}/api/health"]
       interval: 2s
@@ -60,3 +82,6 @@ services:
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]
     mem_limit: 512m
+
+volumes:
+  gateway-cert:

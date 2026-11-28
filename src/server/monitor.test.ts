@@ -258,3 +258,22 @@ describe("stepsFor", () => {
     expect(stepsFor({ reachable: false, port: 1, reason: "unhealthy" }, true)).toEqual({ reach: "answered", trust: "trusted", keys: "read" });
   });
 });
+
+describe("restart listeners", () => {
+  it("are told when the keys change, with the detection time, and not for the first keys seen", async () => {
+    const m = make();
+    const seen: string[] = [];
+    const stop = m.onRestart((at) => seen.push(at));
+    await m.checkNow();
+    expect(seen).toEqual([]);
+    keys = "run-2";
+    await vi.advanceTimersByTimeAsync(2000);
+    await m.checkNow();
+    expect(seen).toEqual(["2026-11-26T14:00:02.000Z"]);
+    stop();
+    keys = "run-3";
+    await vi.advanceTimersByTimeAsync(2000);
+    await m.checkNow();
+    expect(seen).toHaveLength(1);
+  });
+});

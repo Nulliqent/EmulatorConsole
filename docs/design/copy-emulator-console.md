@@ -154,6 +154,25 @@ Before the first answer, a notice's text reads "No answer since the Console star
 | Browser refused | Refused {count} requests sent from a browser page. Last at {time}. | B2 |
 | TLS refused | A TLS connection was refused because the caller didn't trust the Gateway's certificate. | B4 |
 | First Call | First Call recorded: {operation} at {time}. | |
+| Always recording | The Gateway records whenever the Console runs, with or without an open tab. Shown beside the endpoint, after "Recording is on." | |
+| Port in use, help | The Console works without it. To use another port, set this in docker-compose.yaml and restart the Console: `GATEWAY_PORT={port+1}` · Copy the line | B1 |
+| Gateway failed | The Gateway couldn't start. The Console works without it. | |
+| Browser refused, one | Refused 1 request sent from a browser page. Last at {time}. | B2 |
+| TLS refused, count | …certificate. Once, last at {time}. / {count} times, last at {time}. | B4 |
+| TLS help | Use the http line above, or have your SDK trust the Gateway's certificate: (then the `curl` and `NODE_EXTRA_CA_CERTS` lines) | B4 |
+| Console silent | The Console didn't answer. | |
+| SDK settings | Three copyable lines: `AWS_ENDPOINT_URL=http://127.0.0.1:{port}`, `AWS_SHARED_CREDENTIALS_FILE=~/.aws/emulator/{port}/emulator_credentials`, `AWS_REGION=us-east-1`. Then: Use the Emulator's own keys, as above, and any Region. Your SDK signs with them and the Emulator checks the signature. | |
+| Certificate, title | If your SDK follows https URLs | B4 |
+| Certificate, why | SQS queue URLs and presigned S3 links come back from the Emulator as https. They reach the Gateway, and are recorded, only when your SDK trusts the Gateway's certificate: | B4 |
+| Certificate, steps | 1. Download the certificate: `curl -o gateway.pem {console}/api/gateway/certificate` · 2. Tell your SDK to trust it, for Node and for the AWS CLI and other SDKs: `NODE_EXTRA_CA_CERTS=./gateway.pem` `AWS_CA_BUNDLE=./gateway.pem` | B4 |
+| Certificate, virtual host | https to virtual-host bucket names (bucket.localhost) isn't supported. Use path style, or plain http. | B4 |
+| Straight to the Emulator (replaces the prototype line) | SQS queue URLs and presigned S3 links lead back to the Gateway. URLs for other services may lead straight to the Emulator, and requests to those aren't recorded. | |
+| TLS help (replaces the B4 help) | Use the http line above, or follow the certificate steps. | B4 |
+| Setting failed | Couldn't change the setting. The Console didn't answer. (the box goes back to what it was) | |
+| Body removed | Body removed to save memory. (in place of a body, on the oldest Calls past 200 MB of bodies) | C2 |
+| Body withheld | Not shown: this body could not be checked for sensitive values. Show reveals it. | C6 |
+| Gateway unreachable, to the SDK | The Gateway couldn't reach the Emulator. / The Emulator didn't answer in time. (code `ServiceUnavailable`, in the protocol of the request) | |
+| Gateway Host refused, to the caller | Host not allowed. The Gateway answers to localhost and 127.0.0.1; set GATEWAY_HOSTS to allow another name. (421) | |
 
 ### Operation form
 

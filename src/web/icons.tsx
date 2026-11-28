@@ -1,4 +1,10 @@
 const PATHS = {
+  info: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5M12 8h.01" />
+    </>
+  ),
   run: <path d="M3 12h4l3-7 4 14 3-7h4" />,
   calls: (
     <>

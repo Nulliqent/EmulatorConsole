@@ -179,3 +179,9 @@
 - Why: Destructive Operations confirm with Cancel focused and no default button, and name what goes; Verdicts say what they can't tell instead of assigning fault; there is no telemetry, sign-up, nagging or engagement mechanic; the Gateway is optional and says what it records and that it records whenever the Console runs; the "Record headers and status only" choice starts unchecked, so the default records more, which serves the Developer's own debugging on their own machine and is stated beside the choice; sensitive fields stay hidden until shown.
 - Rejected: a destructive primary button in confirm dialogs.
 - Rests on: evaluation-emulator-console.md; hig-application.md; copy-emulator-console.md
+
+## 2026-11-26 · Recorded bodies have a memory budget
+- Decided by: Claude, default
+- Why: 5,000 Calls of two bodies of 256 KB, and the copy "Show" needs, don't fit the Console's 512 MB container. Bodies of all stored Calls together stay within 200 MB; past it the oldest Calls lose their bodies and keep their summaries and headers, and the Calls list says so (C2).
+- Rejected: a smaller body limit, which cuts the bodies of every Call to save a few; refusing new Calls, which loses the latest, the ones being debugged.
+- Rests on: states-emulator-console.md (C2)

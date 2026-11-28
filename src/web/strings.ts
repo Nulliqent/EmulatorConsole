@@ -65,6 +65,42 @@ export const S = {
   tabConnection: "Connection", // prototype
   tabGateway: "Gateway", // prototype
 
+  gatewaySub: "Optional. Services, Operations and Markers work without it.", // prototype
+  recordedTitle: "What is recorded", // prototype
+  recordedText: "Every request sent through the Gateway and its response, in memory on this computer only. DynamoDB items and SQS message bodies are shown as sent.", // prototype
+  keptLabel: "Kept", // prototype
+  keptText: "Latest 5,000 Calls, bodies up to 256 KB", // prototype
+  neverKeptLabel: "Never kept", // prototype
+  neverKeptText: "Signatures and session tokens", // prototype
+  hiddenLabel: "Hidden until shown", // prototype
+  hiddenText: "Fields AWS marks as sensitive", // prototype
+  headersOnly: "Record headers and status only", // prototype
+  pointTitle: "Point your SDK at the Gateway", // prototype
+  copyEndpoint: "Copy", // prototype
+  copyEndpointOnPage: "Copy the SDK settings", // accessible name; not shown
+  sdkNeeds: "Use the Emulator's own keys, as above, and any Region. Your SDK signs with them and the Emulator checks the signature.", // deck
+  certTitle: "If your SDK follows https URLs", // deck
+  certWhy: "SQS queue URLs and presigned S3 links come back from the Emulator as https. They reach the Gateway, and are recorded, only when your SDK trusts the Gateway's certificate:", // deck
+  certStep1: "1. Download the certificate:", // deck
+  certStep2: "2. Tell your SDK to trust it, for Node and for the AWS CLI and other SDKs:", // deck
+  certNoVirtualHost: "https to virtual-host bucket names (bucket.localhost) isn't supported. Use path style, or plain http.", // deck
+  waitingFirst: "Waiting for the first Call.", // prototype
+  firstCall: (operation: string, time: string) => `First Call recorded: ${operation} at ${time}.`, // deck
+  updatesWhen: "This page updates when one arrives.", // prototype
+  browserRefusedNote: "Requests from a browser are refused.", // prototype
+  straightToEmulator: "SQS queue URLs and presigned S3 links lead back to the Gateway. URLs for other services may lead straight to the Emulator, and requests to those aren\u2019t recorded.", // deck
+  recordsAlways: "The Gateway records whenever the Console runs, with or without an open tab.", // decisions 2026-11-26
+  recordingOn: "Recording is on.", // decisions 2026-11-26
+  gatewayPortInUse: (port: number) => `The Gateway couldn't start: port ${port} is in use.`, // deck B1
+  gatewayPortInUseHelp: "The Console works without it. To use another port, set this in docker-compose.yaml and restart the Console:", // deck B1
+  gatewayFailed: "The Gateway couldn't start. The Console works without it.", // added
+  copyPortLine: "Copy the line", // deck B1
+  refusedFromBrowser: (count: number, time: string) => `Refused ${count} ${count === 1 ? "request" : "requests"} sent from a browser page. Last at ${time}.`, // deck B2
+  tlsRefused: (count: number, time: string) => `A TLS connection was refused because the caller didn't trust the Gateway's certificate. ${count === 1 ? "Once" : `${count} times`}, last at ${time}.`, // deck B4
+  tlsHelp: "Use the http line above, or follow the certificate steps.", // deck B4
+  settingFailed: "Couldn't change the setting. The Console didn't answer.", // deck
+  gatewayUnknown: "The Console didn't answer.", // added
+
   placeholder: "This page isn't built yet.", // deck
   notFoundTitle: "Page not found", // deck
   notFoundText: "There is no page at this address.", // deck

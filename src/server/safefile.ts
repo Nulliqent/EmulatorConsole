@@ -1,4 +1,4 @@
-import { constants } from "node:fs";
+import { closeSync, constants, fstatSync, openSync, readFileSync } from "node:fs";
 import { open } from "node:fs/promises";
 
 /** Why a run file could not be used: it is not there, or it is not a small regular file. */
@@ -39,4 +39,19 @@ export async function readSmallFileResult(file: string, maxBytes: number): Promi
 export async function readSmallFile(file: string, maxBytes: number): Promise<string | null> {
   const result = await readSmallFileResult(file, maxBytes);
   return result.ok ? result.text : null;
+}
+
+/** The synchronous form of `readSmallFile`, for start-up. */
+export function readSmallFileSync(file: string, maxBytes: number): string | null {
+  let fd: number | undefined;
+  try {
+    fd = openSync(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const info = fstatSync(fd);
+    if (!info.isFile() || info.size > maxBytes) return null;
+    return readFileSync(fd, { encoding: "utf8" }).slice(0, maxBytes);
+  } catch {
+    return null;
+  } finally {
+    if (fd !== undefined) closeSync(fd);
+  }
 }

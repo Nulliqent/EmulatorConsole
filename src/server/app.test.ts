@@ -95,6 +95,7 @@ beforeAll(async () => {
     bindHost: "127.0.0.1",
     port: await freePort(),
     gatewayPort: 9300,
+    gatewayHosts: [],
     emulatorHost: "127.0.0.1",
     emulatorPort,
     emulatorHome: path.join(tmp, "home"),
