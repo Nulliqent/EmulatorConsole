@@ -22,7 +22,7 @@
 - Decided by: the designer
 - Why: a Developer sees a missing operation before sending it. A live response overrides the label.
 - Rejected: starting empty and learning from responses, which shows a gap only after someone hits it.
-- Rests on: 7,291 stub markers among 19,405 operation files at v1.0.509
+- Rests on: 7,192 stub markers (`//! SCAFFOLDED, NOT IMPLEMENTED:`) among 19,405 operation files at v1.0.509
 
 ## 2026-11-25 · Every operation can be sent; generated lists stay read-only
 - Decided by: the designer

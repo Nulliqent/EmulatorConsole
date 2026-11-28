@@ -1,7 +1,7 @@
 # Emulator Console, first version
 
 ## Context
-Emulator Console is a local web console for Developers running AWS Emulator on their own machine ([context](context-emulator-console.md)). AWS Emulator offers 436 services, and at v1.0.509 about 38% of their operations (7,291 of 19,405) are unimplemented ([ADR 0005](../adr/0005-generated-pages-for-every-service.md)).
+Emulator Console is a local web console for Developers running AWS Emulator on their own machine ([context](context-emulator-console.md)). AWS Emulator offers 436 services, and at v1.0.509 about 37% of their operations (7,192 of 19,405 operation files, counted by the `//! SCAFFOLDED, NOT IMPLEMENTED:` marker) are unimplemented stubs ([ADR 0005](../adr/0005-generated-pages-for-every-service.md)).
 
 StackPort, MyDevStack, and LocalStack's App Inspector and Resource Browser are the nearest tools; the AWS CLI and SDK logs are the usual workaround ([existing tools](research-existing-tools.md)).
 

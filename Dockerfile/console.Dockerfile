@@ -12,6 +12,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json ./
 COPY --from=build /app/dist ./dist
+# The Service Model index is generated from the reference clones and committed (npm run model-index); the
+# clones are not in the build context.
+COPY data/model-index ./data/model-index
 # The user is set by compose (the host's uid, so the Emulator's 0600 files are readable).
 USER node
 EXPOSE 9298

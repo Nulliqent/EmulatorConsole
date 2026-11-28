@@ -30,3 +30,15 @@ export function checkRequest(
   }
   return null;
 }
+
+/**
+ * Refuses an API request a browser says came from another site. `Sec-Fetch-Site` is set by browsers and cannot be
+ * changed by page script: `same-origin` (the Console's own pages) and `none` (typed or bookmarked) pass, and so does a
+ * request without the header (curl, tests, older browsers). `cross-site` is refused, and so is `same-site`: another
+ * port on localhost is the same site but not the Console.
+ */
+export function checkFetchSite(headers: { "sec-fetch-site"?: string | string[] }): Refusal | null {
+  const site = headers["sec-fetch-site"];
+  if (site === undefined || site === "same-origin" || site === "none") return null;
+  return { status: 403, message: "Cross-site request not allowed" };
+}

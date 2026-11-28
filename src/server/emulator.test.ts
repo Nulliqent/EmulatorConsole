@@ -38,6 +38,7 @@ function configFor(home: string): Config {
     emulatorPort: port,
     emulatorHome: home,
     webRoot: tmp,
+    modelIndexDir: path.join(tmp, "model-index"),
   };
 }
 

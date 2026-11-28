@@ -30,6 +30,15 @@ describe("console-e2e stack", () => {
     expect(JSON.parse(res.body)).toEqual({ emulator: { reachable: true, port: EMULATOR_PORT } });
   });
 
+  it("the image ships the Service Model index", async () => {
+    const res = await get("/api/services");
+    expect(res.status).toBe(200);
+    const body = JSON.parse(res.body) as { meta: { emulator: { version: string } }; services: unknown[] };
+    expect(body.services).toHaveLength(436);
+    expect(body.meta.emulator.version).toBe("1.0.509");
+    expect((await get("/api/service?sdkId=DynamoDB")).status).toBe(200);
+  });
+
   it("serves the shell page", async () => {
     const res = await get("/");
     expect(res.status).toBe(200);

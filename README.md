@@ -32,6 +32,18 @@ For UI work, run `npm run dev` (API) and `npm run dev:web` (Vite, on 127.0.0.1) 
 
 `npm install` prints a harmless `allow-scripts` warning about the install scripts of esbuild (and fsevents on macOS). The Console does not need them.
 
+## Service Model index
+
+`data/model-index/` is generated from the two reference clones and committed (about 4.4 MB: `index.json` plus one brotli file per service holding its operations and Smithy shape graph, without documentation text). The Console reads it from there; `MODEL_INDEX_DIR` overrides the folder. It describes Emulator 1.0.509, which `index.json` records.
+
+To regenerate it, point the script at the clones (it only reads them, and refuses an output folder inside either):
+
+```sh
+API_MODELS_DIR=/path/to/api-models-aws AWS_EMULATOR_DIR=/path/to/aws-emulator npm run model-index
+```
+
+Both default to `./api-models-aws` and `./aws-emulator`. The Emulator release is read from the tag at the clone's checked-out commit (or pass `--emulator-version`). Routes: `GET /api/services` (all services with counts and labels), `GET /api/service?sdkId=DynamoDB` (one service's operations; `slug=dynamodb` also works) and `GET /api/service/shapes?sdkId=DynamoDB[&operation=PutItem]` (its Smithy shape graph, or the shapes one operation reaches). They carry an ETag. In code, use `modelIndex(config.modelIndexDir)` from `src/server/model-index`.
+
 ## Test it
 
 ```sh

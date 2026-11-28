@@ -19,5 +19,5 @@ ADR-0002 ruled out generated pages because 311 models declare no resource shapes
 - Neither reference clone is built into or changed; the build uses its own download.
 - Generated lists are read-only. Changes go through the Operation Runner, and Destructive Operations ask for confirmation.
 - 71 services have no list that needs no input. They open on their operations and say which input their lists need. A Get or Search that returns a collection may be settings and not resources, so those are checked per service.
-- About 38% of operations (7,291 of 19,405) are unimplemented stubs at v1.0.509, so missing operations need to be visible before they are sent.
+- About 37% of operations (7,192 of 19,405 operation files) are unimplemented stubs at v1.0.509, so missing operations need to be visible before they are sent. The count is of files carrying the Emulator's `//! SCAFFOLDED, NOT IMPLEMENTED:` marker. The Console's per-operation "not implemented" total (7,216, over the Service Model's operations) is a different number: it also counts 44 operations the Emulator models but leaves unwired (they answer 501 too) and leaves out stubs the Service Model lacks.
 - Request serialization now carries the whole product, not one feature (ADR-0004).
