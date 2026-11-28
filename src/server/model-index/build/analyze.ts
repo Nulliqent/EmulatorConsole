@@ -186,6 +186,22 @@ export function listKind(ast: Ast, opId: string): OperationListKind | undefined 
   return undefined;
 }
 
+/**
+ * Whether an operation is a List or Describe that returns a collection but takes at least one required member, so it
+ * lists only once the Developer supplies input (Budgets' DescribeBudgets needs AccountId).
+ */
+export function listsNeedInput(ast: Ast, opId: string): boolean {
+  const op = ast.shapes[opId] as Record<string, any> | undefined; // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (!op) return false;
+  const name = opId.split("#")[1];
+  const input = op.input?.target as string | undefined;
+  const output = op.output?.target as string | undefined;
+  if (!/^(List|Describe)/.test(name)) return false;
+  if (/^ListTags|TagsForResource$/.test(name)) return false; // a tag list is not a list of resources
+  if (isUnit(input) || !requiredMembers(ast.shapes[input])) return false;
+  return !isUnit(output) && returnsCollection(ast, ast.shapes[output]);
+}
+
 export function classifyService(kinds: (OperationListKind | undefined)[]): ListClass {
   if (kinds.includes("list")) return "list";
   if (kinds.includes("get-or-search")) return "get-or-search";
@@ -213,5 +229,6 @@ export function describeOperation(ast: Ast, opId: string, memo: Map<string, stri
   if (http) info.http = { method: http.method, uri: http.uri, ...(http.code && http.code !== 200 ? { code: http.code } : {}) };
   const list = listKind(ast, opId);
   if (list) info.list = list;
+  if (listsNeedInput(ast, opId)) info.listNeedsInput = true;
   return info;
 }

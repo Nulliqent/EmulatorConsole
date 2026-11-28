@@ -89,7 +89,7 @@ test.describe("the shell, Emulator answering", () => {
     await find.click();
     const dialog = page.getByRole("dialog", { name: "Find" });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("textbox")).toBeFocused();
+    await expect(dialog.getByRole("combobox")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(find).toBeFocused();
@@ -97,7 +97,7 @@ test.describe("the shell, Emulator answering", () => {
     await page.getByRole("link", { name: "Skip to content" }).focus();
     await page.keyboard.press(process.platform === "darwin" ? "Meta+k" : "Control+k");
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("textbox")).toBeFocused();
+    await expect(dialog.getByRole("combobox")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });

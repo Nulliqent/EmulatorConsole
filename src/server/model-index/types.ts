@@ -33,7 +33,7 @@ export type ServiceModelFile = {
   shapes: Record<string, SmithyShape>;
 };
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const INDEX_FILE = "index.json";
 export const SERVICES_DIR = "services";
 export const serviceFileName = (slug: string) => `${slug}.json.br`;

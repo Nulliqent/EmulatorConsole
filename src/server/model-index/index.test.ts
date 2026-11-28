@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { loadConfig } from "../config.js";
@@ -55,6 +58,49 @@ describe("the committed Service Model index", () => {
   it("names the Emulator version its labels describe", () => {
     expect(index.meta.emulator.version).toBe("1.0.509");
     expect(index.meta.emulator.commit).toMatch(/^[0-9a-f]{40}$/);
+  });
+
+  it("versions the index by the hash of index.json, so regenerated content changes HTTP validators", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "model-index-"));
+    try {
+      const src = loadConfig({}).modelIndexDir;
+      const original = fs.readFileSync(path.join(src, "index.json"), "utf8");
+      fs.writeFileSync(path.join(dir, "index.json"), original);
+      const a = await ModelIndex.load(dir);
+      // Same commits, different content (as after new build logic): the version must change.
+      const edited = JSON.parse(original) as { services: { title: string }[] };
+      edited.services[0]!.title += " (changed)";
+      fs.writeFileSync(path.join(dir, "index.json"), JSON.stringify(edited));
+      const b = await ModelIndex.load(dir);
+      expect(b.meta.models.commit).toBe(a.meta.models.commit);
+      expect(b.version).not.toBe(a.version);
+      expect(a.version).toBe((await ModelIndex.load(src)).version);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("records a content hash of every service file in meta, which index.json's own hash then covers", () => {
+    const dir = path.join(loadConfig({}).modelIndexDir, "services");
+    const hash = createHash("sha256");
+    for (const s of [...index.services()].sort((a, b) => (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0))) hash.update(s.slug).update("\0").update(fs.readFileSync(path.join(dir, `${s.slug}.json.br`)));
+    expect(index.meta.contentHash).toBe(hash.digest("hex"));
+    expect(index.meta.schemaVersion).toBe(2);
+  });
+
+  it("finds the operations that list only with input (Budgets), apart from those that list without", () => {
+    expect(index.service("Budgets")?.inputListOperations).toContain("DescribeBudgets");
+    expect(index.service("Budgets")?.listOperations).toEqual([]);
+    expect(index.service("DynamoDB")?.inputListOperations).toContain("DescribeContributorInsights");
+    expect(index.service("DynamoDB")?.inputListOperations).not.toContain("ListTagsOfResource"); // a tag list is not a resource list
+    expect(index.service("DynamoDB")?.inputListOperations).not.toContain("ListTables");
+  });
+
+  it("builds the operation table Find searches: every operation, with its label", async () => {
+    const table = await index.operationTable();
+    expect(table).toHaveLength(index.meta.counts.operations);
+    expect(table.find((o) => o.name === "ListBuckets" && o.sdkId === "S3")?.implementation).toBe("implemented");
+    expect(await index.operationTable()).toBe(table); // built once
   });
 
   it("counts stubs in the Emulator's 19,405 operation files", () => {

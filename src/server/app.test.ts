@@ -8,6 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
+import type { FindResponse } from "../shared/find.js";
 import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
 import { createMonitorFor } from "./monitor.js";
 import type { Config } from "./config.js";
@@ -291,6 +292,28 @@ describe("Service Model index API", () => {
     expect(again.status).toBe(304);
     expect(again.body).toBe("");
     expect((await get({ ...host(), "if-none-match": '"other"' }, "/api/services")).status).toBe(200);
+  });
+
+  it("Find: answers GET /api/find with services before operations, capped, with labels", async () => {
+    const res = await get(host(), "/api/find?q=listbuckets");
+    expect(res.status).toBe(200);
+    const body = JSON.parse(res.body) as FindResponse;
+    expect(body.emulator.version).toBe("1.0.509");
+    expect(body.operations[0]).toMatchObject({ name: "ListBuckets", service: { slug: "s3" } });
+    expect(body.operations.length).toBeLessThanOrEqual(12);
+    const none = JSON.parse((await get(host(), "/api/find?q=zzzzqqqq")).body) as FindResponse;
+    expect(none).toMatchObject({ services: [], operations: [], notOffered: [] });
+    const empty = JSON.parse((await get(host(), "/api/find")).body) as FindResponse;
+    expect(empty.services).toHaveLength(8);
+  });
+
+  it("Find: is read-only, same-origin only, and carries no ETag", async () => {
+    const own = { ...host(), origin: `http://127.0.0.1:${config.port}`, "x-console": "1" };
+    expect((await request("POST", own, "/api/find?q=s3")).status).toBe(405);
+    expect((await get({ ...host(), "sec-fetch-site": "cross-site" }, "/api/find?q=s3")).status).toBe(403);
+    expect((await get(host(), "/api/find?q=s3")).headers.etag).toBeUndefined();
+    // A very long query is cut, not refused.
+    expect((await get(host(), `/api/find?q=${"a".repeat(5000)}`)).status).toBe(200);
   });
 
   it("refuses a request a browser marks cross-site or same-site, on /api only", async () => {

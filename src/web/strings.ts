@@ -100,6 +100,55 @@ export const S = {
   tlsHelp: "Use the http line above, or follow the certificate steps.", // deck B4
   settingFailed: "Couldn't change the setting. The Console didn't answer.", // deck
   gatewayUnknown: "The Console didn't answer.", // added
+  servicesTitle: "Services", // prototype
+  servicesOffered: (count: number) => `${count} offered by this Emulator`, // prototype
+  seenThisRun: "Seen this run", // prototype
+  filterServices: "Filter services", // prototype (accessible name)
+  filterServicesPlaceholder: "Filter services by name or SDK ID", // deck
+  filterGroup: "Show only", // deck (accessible name of the chip group)
+  chipCurated: "Curated", // prototype
+  chipLists: "Has resource lists", // prototype
+  chipImplemented: (version: string) => `Everything implemented in ${version}`, // deck
+  curatedBadge: "Curated", // prototype
+  colService: "Service", // prototype
+  colSdkId: "SDK ID", // prototype
+  colResources: "Resources", // prototype
+  colEmulator: (version: string) => `Emulator ${version}`, // prototype
+  resourcesListed: "Listed", // prototype
+  resourcesGetSearch: "Lists by Get or Search", // deck
+  resourcesNeedInput: "Lists need input", // prototype
+  resourcesNone: "No list", // deck
+  allImplemented: "All implemented", // prototype
+  someNotImplemented: "Some not implemented", // prototype
+  servicesShown: (shown: number, total: number) => (shown === total ? `${total} services` : `${shown} of ${total} services`), // deck
+  servicesNoMatch: (text: string, withFilters: boolean) => (text ? (withFilters ? `No services match "${text}" with these filters.` : `No services match "${text}".`) : "No services match these filters."), // deck
+  clearFilters: "Clear filters", // deck
+  servicesFailed: "Couldn't read the list of services.", // deck
+  labelsNote: (version: string) => `Labels describe Emulator ${version}. The Emulator doesn't report its version, so yours may differ.`, // prototype
+  servicesLoading: "Reading the list of services…", // deck
+  servicesTable: "Services table", // deck (accessible name of the table)
+  colEmulatorPlain: "Emulator", // deck (heading while the version is not yet read)
+  servicesJumpHint: "Focus a service and type letters to jump to it.", // deck
+
+  findLabel: "Find", // deck
+  findGroupServices: "Services", // prototype
+  findGroupOperations: "Operations", // prototype
+  findResults: (count: number) => (count === 0 ? "No results" : count === 1 ? "1 result" : `${count} results`), // deck (announced)
+  findResultsCapped: (count: number) => `${count} results, more not shown`, // deck (announced when the cap cut the list)
+  findNotImplemented: (version: string) => `Not implemented in ${version}`, // prototype
+  findNoMatch: (text: string) => `No service or operation matches "${text}".`, // deck
+  findBrowse: "Browse all services", // prototype
+  findNotOffered: (service: string) => `AWS Emulator doesn't offer ${service}.`, // deck D1
+  findMoreServices: (count: number) => `${count} more services. Type more to narrow them.`, // deck
+  findMoreOperations: (count: number) => `${count} more operations. Type more to narrow them.`, // deck
+  findFailed: "Couldn't search. The Console isn't answering.", // deck
+
+  tabResources: "Resources", // prototype
+  tabOperations: "Operations", // prototype
+  tabCalls: "Calls", // prototype
+  crumbServices: "Services", // prototype
+  serviceNotFoundTitle: "Service not found", // deck
+  serviceNotFoundText: (name: string) => `The Emulator doesn't offer a service called ${name}.`, // deck
 
   placeholder: "This page isn't built yet.", // deck
   notFoundTitle: "Page not found", // deck

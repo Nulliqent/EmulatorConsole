@@ -1,8 +1,9 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import zlib from "node:zlib";
-import type { ModelIndexMeta, OperationInfo, ServiceSummary } from "../../shared/models.js";
+import type { ImplementationLabel, ModelIndexMeta, OperationInfo, ServiceSummary } from "../../shared/models.js";
 import { reachableShapes } from "./sensitive.js";
 import { INDEX_FILE, SCHEMA_VERSION, SERVICES_DIR, serviceFileName } from "./types.js";
 import type { ModelIndexFile, ServiceModelFile, SmithyShape } from "./types.js";
@@ -14,6 +15,9 @@ const brotliDecompress = promisify(zlib.brotliDecompress);
 
 /** Decompressed bytes of service shape graphs kept in memory. The summaries of all services always are. */
 export const DEFAULT_CACHE_BYTES = 100 * 1024 * 1024;
+
+/** What Find searches for an operation. */
+export type OperationEntry = { name: string; sdkId: string; implementation: ImplementationLabel };
 
 type Cached = { pending: Promise<ServiceModelFile>; bytes: number };
 
@@ -30,10 +34,13 @@ export class ModelIndex {
   private readonly byKey = new Map<string, ServiceSummary>();
   private readonly cache = new Map<string, Cached>();
   private cachedBytes = 0;
+  private table: Promise<OperationEntry[]> | undefined;
 
-  private constructor(private readonly dir: string, file: ModelIndexFile, private readonly maxCacheBytes: number) {
+  private constructor(private readonly dir: string, file: ModelIndexFile, hash: string, private readonly maxCacheBytes: number) {
     this.meta = file.meta;
-    this.version = `${file.meta.schemaVersion}-${file.meta.models.commit.slice(0, 12)}-${file.meta.emulator.commit.slice(0, 12)}`;
+    // The hash of index.json's bytes: regenerating the index with new build logic changes it even when the
+    // Service Models and Emulator commits are the same, so a browser never keeps a stale answer.
+    this.version = `${file.meta.schemaVersion}-${hash}`;
     this.summaries = file.services;
     for (const s of file.services) this.byKey.set(s.sdkId, s);
     // A slug never shadows an SDK ID.
@@ -41,11 +48,12 @@ export class ModelIndex {
   }
 
   static async load(dir: string, opts: { maxCacheBytes?: number } = {}): Promise<ModelIndex> {
-    const file = JSON.parse(await fs.readFile(path.join(dir, INDEX_FILE), "utf8")) as ModelIndexFile;
+    const bytes = await fs.readFile(path.join(dir, INDEX_FILE));
+    const file = JSON.parse(bytes.toString("utf8")) as ModelIndexFile;
     if (file.meta.schemaVersion !== SCHEMA_VERSION) {
       throw new Error(`model index in ${dir} has schema ${file.meta.schemaVersion}; this build reads ${SCHEMA_VERSION}. Run npm run model-index.`);
     }
-    return new ModelIndex(dir, file, opts.maxCacheBytes ?? DEFAULT_CACHE_BYTES);
+    return new ModelIndex(dir, file, createHash("sha256").update(bytes).digest("hex").slice(0, 16), opts.maxCacheBytes ?? DEFAULT_CACHE_BYTES);
   }
 
   /** Every service the Emulator offers, sorted by SDK ID. */
@@ -108,6 +116,28 @@ export class ModelIndex {
     return reachableShapes(detail.shapes, [op.shapeId, ...detail.commonErrors]);
   }
 
+  /**
+   * Every operation of every service, as the small records Find searches: name, service and implementation label.
+   * Built once, on the first call (it reads all 436 service files, about half a second), then kept. The service files
+   * are read straight, not through the cache above, so a search never evicts the services a Developer is browsing.
+   */
+  operationTable(): Promise<OperationEntry[]> {
+    this.table ??= this.buildTable().catch((e: unknown) => {
+      this.table = undefined; // a failed build can be retried
+      throw e;
+    });
+    return this.table;
+  }
+
+  private async buildTable(): Promise<OperationEntry[]> {
+    const out: OperationEntry[] = [];
+    for (const summary of this.summaries) {
+      const file = await this.readFile(summary);
+      for (const o of file.operations) out.push({ name: o.name, sdkId: summary.sdkId, implementation: o.implementation });
+    }
+    return out;
+  }
+
   private evict(keep: string) {
     // The one just loaded stays even if it alone passes the cap.
     for (const [k, v] of this.cache) {
@@ -119,10 +149,16 @@ export class ModelIndex {
   }
 
   private async read(summary: ServiceSummary): Promise<ServiceModelFile> {
+    return this.readFile(summary, (bytes) => {
+      const entry = this.cache.get(summary.sdkId);
+      if (entry) entry.bytes = bytes;
+    });
+  }
+
+  private async readFile(summary: ServiceSummary, onSize?: (bytes: number) => void): Promise<ServiceModelFile> {
     const packed = await fs.readFile(path.join(this.dir, SERVICES_DIR, serviceFileName(summary.slug)));
     const text = await brotliDecompress(packed);
-    const entry = this.cache.get(summary.sdkId);
-    if (entry) entry.bytes = text.length;
+    onSize?.(text.length);
     return JSON.parse(text.toString("utf8")) as ServiceModelFile;
   }
 }

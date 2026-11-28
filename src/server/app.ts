@@ -2,9 +2,11 @@ import http from "node:http";
 import type { HealthResponse } from "../shared/api.js";
 import type { CallResponse, CallsResponse, ClearResponse, GatewaySettingsRequest, GatewayState, GatewayStatus, RevealResponse } from "../shared/calls.js";
 import { CallStore } from "./calls/store.js";
+import type { FindResponse } from "../shared/find.js";
 import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
 import type { Config } from "./config.js";
 import { checkFetchSite, checkRequest } from "./guard.js";
+import { find } from "./find.js";
 import { modelIndex } from "./model-index/index.js";
 import type { Monitor } from "./monitor.js";
 import { handleSend } from "./sender/route.js";
@@ -60,6 +62,17 @@ const routes: Route[] = [
       GET: async ({ config }): Promise<Reply> => {
         const index = await modelIndex(config.modelIndexDir);
         return { status: 200, headers: modelHeaders(index), body: { meta: index.meta, services: index.services() } satisfies ServicesResponse };
+      },
+    },
+  },
+  {
+    path: "/api/find",
+    methods: {
+      // Find: services and operations by name, capped. A GET that only reads the generated index (no Emulator call).
+      // No ETag: the answer depends on `q`, and it is cheap to compute.
+      GET: async ({ config, url }): Promise<Reply> => {
+        const index = await modelIndex(config.modelIndexDir);
+        return { status: 200, body: (await find(index, url.searchParams.get("q") ?? "")) satisfies FindResponse };
       },
     },
   },

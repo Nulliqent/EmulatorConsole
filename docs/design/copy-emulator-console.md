@@ -106,6 +106,51 @@ Before the first answer, a notice's text reads "No answer since the Console star
 | No page at the address, title | Page not found | |
 | No page at the address, text | There is no page at this address. | |
 
+### Services page
+
+| Where | String | State |
+|---|---|---|
+| Page title | Services | |
+| Subtitle | {count} offered by this Emulator | |
+| Seen row heading | Seen this run | |
+| Filter field, placeholder | Filter services by name or SDK ID | |
+| Filter field, name | Filter services | |
+| Filter group, name | Show only | |
+| Filters | Curated · Has resource lists · Everything implemented in {version} | |
+| Column headings | Service · SDK ID · Resources · Emulator {version} | |
+| Curated badge | Curated | |
+| Resources, a List or Describe the Emulator implements that needs no input | Listed | |
+| Resources, only a Get or Search that lists without input | Lists by Get or Search | |
+| Resources, only lists that need input (a required member, such as Budgets' AccountId) | Lists need input | |
+| Resources, neither | No list | |
+| Emulator column | All implemented · Some not implemented | |
+| Version note | Labels describe Emulator {version}. The Emulator doesn't report its version, so yours may differ. | |
+| Count under the table | {count} services · {shown} of {count} services | |
+| Count, announced after typing pauses | {shown} of {count} services | |
+| No service matches | No services match "{text}". · No services match "{text}" with these filters. · No services match these filters. | |
+| Clear filters button | Clear filters | |
+| Table region, name | Services table | |
+| Letters jump, hint under the table | Focus a service and type letters to jump to it. | |
+| Index not read | Couldn't read the list of services. · Try again | |
+| Index reading (also the A4 placeholder table: header and three rows) | Reading the list of services… | A4 |
+| Service page, tabs | Resources · Operations · Calls | |
+| Service page, breadcrumb | Services | |
+| Unknown service, title | Service not found | |
+| Unknown service, text | The Emulator doesn't offer a service called {slug}. | |
+
+### Find
+
+| Where | String | State |
+|---|---|---|
+| Dialog and group name | Find | |
+| Groups | Services · Operations | |
+| Result count, announced as the text changes | No results · 1 result · {count} results · {count} results, more not shown (when the cap cut the list) · the "doesn't offer" line when only that shows | |
+| Operation the Emulator lacks | Not implemented in {version} | |
+| Nothing matches | No service or operation matches "{text}". Browse all services | |
+| Service the Emulator doesn't offer | AWS Emulator doesn't offer {service}. Browse all services | D1 |
+| Cap | {count} more services. Type more to narrow them. · {count} more operations. Type more to narrow them. | |
+| Search failed | Couldn't search. The Console isn't answering. | |
+
 ### Lists
 
 | Where | String | State |

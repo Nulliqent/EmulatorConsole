@@ -76,7 +76,7 @@ Severity: Critical causes confusion or data loss; Major significantly harms the 
 | The Console's own reads may keep an idle Emulator alive | Not addressed | Reads happen only on focus, after a write Call, or on request, so a Console left in a background tab sends nothing. | Major |
 | Two Emulators on different ports | One Emulator per Console | Calls through the Gateway still reach only the configured one; setup says which. | Minor |
 | A Call from another SDK fails signature checks through the Gateway | Untested outside JavaScript | Verdict Unclear, with: "Signature checks failed through the Gateway. Try sending it straight to the Emulator." | Major |
-| 436 services in the A–Z list | Drawn as a table | Filter field keeps focus on open; letters jump with the keyboard. | Minor |
+| 436 services in the A–Z list | Drawn as a table | The filter field keeps focus while typing and while filters change; with a service focused, letters jump to the next service that starts with them. Opening the page still moves focus to the h1 (keyboard map). | Minor |
 | An operation with 60 optional fields | Optional fields behind a disclosure | Disclosure lists names; a filter appears past 12. | Minor |
 | No Console tab is open while code calls the Gateway | Records, and nothing says so | Keeps recording. The Gateway page says Calls are recorded whenever the Console runs, open tab or not, and the endpoint shows that recording is on. | Major |
 | Text in another script in a resource name | Not drawn | Names render as given; no layout depends on name width. | Cosmetic |
