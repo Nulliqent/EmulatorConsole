@@ -5,6 +5,7 @@ import type { Config } from "./config.js";
 import { checkFetchSite, checkRequest } from "./guard.js";
 import { modelIndex } from "./model-index/index.js";
 import type { Monitor } from "./monitor.js";
+import { handleSend } from "./sender/route.js";
 import { readStatic } from "./static.js";
 
 export const SECURITY_HEADERS = {
@@ -107,6 +108,13 @@ const routes: Route[] = [
       },
     },
   },
+  {
+    path: "/api/send",
+    methods: {
+      // Sends one operation to the Emulator, signed with the run's keys (which never leave the server).
+      POST: ({ config, req }) => handleSend(config, req),
+    },
+  },
 ];
 
 /** The service a request names: `sdkId` or `slug`, never both empty. Lookups go through a Map, so any string is safe. */
@@ -132,8 +140,12 @@ function sendJson(res: http.ServerResponse, status: number, value: unknown, head
 export function createApp(config: Config, monitor: Monitor): http.Server {
   return http.createServer(async (req, res) => {
     try {
+      // The send route's own refusals have their own shape, so a client can tell the Console saying no from an Emulator answer.
+      const isSend = (req.url ?? "").split("?")[0] === "/api/send";
+      const deny = (status: number, message: string, head = false) =>
+        sendJson(res, status, isSend ? { kind: "refused", reason: status === 421 ? "host-not-allowed" : status === 405 ? "method-not-allowed" : "forbidden", message } : { error: message }, head);
       const refusal = checkRequest(req.headers, config.port, req.method);
-      if (refusal) return sendJson(res, refusal.status, { error: refusal.message });
+      if (refusal) return deny(refusal.status, refusal.message);
 
       const url = new URL(req.url ?? "/", "http://console.invalid");
       const head = req.method === "HEAD";
@@ -141,13 +153,13 @@ export function createApp(config: Config, monitor: Monitor): http.Server {
 
       if (url.pathname.startsWith("/api/")) {
         const fetchRefusal = checkFetchSite(req.headers);
-        if (fetchRefusal) return sendJson(res, fetchRefusal.status, { error: fetchRefusal.message });
+        if (fetchRefusal) return deny(fetchRefusal.status, fetchRefusal.message);
         const route = routes.find((r) => r.path === url.pathname);
         if (!route) return sendJson(res, 404, { error: "Not found" });
         const handler = route.methods[method];
         if (!handler) {
           res.setHeader("allow", Object.keys(route.methods).join(", "));
-          return sendJson(res, 405, { error: "Method not allowed" }, head);
+          return deny(405, "Method not allowed", head);
         }
         const reply = await handler({ config, monitor, url, req });
         const etag = reply.headers?.etag;

@@ -1,15 +1,10 @@
 import { readSmallFile } from "./safefile.js";
 import https from "node:https";
 import net from "node:net";
-import path from "node:path";
 import type { EmulatorHealth, EmulatorReason } from "../shared/api.js";
 import type { Config } from "./config.js";
+import { MAX_CA_BYTES, runFile } from "./sender/run-files.js";
 
-function runFile(config: Config, name: string): string {
-  return path.join(config.emulatorHome, String(config.emulatorPort), name);
-}
-
-const MAX_CA_BYTES = 16 * 1024;
 const NOT_LISTENING = new Set(["ECONNREFUSED", "ENOTFOUND", "EAI_AGAIN", "EHOSTUNREACH", "ENETUNREACH"]);
 const NOT_TRUSTED = new Set([
   "DEPTH_ZERO_SELF_SIGNED_CERT", "SELF_SIGNED_CERT_IN_CHAIN", "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
@@ -24,7 +19,7 @@ function reasonFor(err?: NodeJS.ErrnoException): EmulatorReason {
 }
 
 /** Whether something accepts a TCP connection at the Emulator's address. No request is sent. */
-function isListening(config: Config): Promise<boolean> {
+export function isListening(config: Config): Promise<boolean> {
   return new Promise((resolve) => {
     const socket = net.connect({ host: config.emulatorHost, port: config.emulatorPort, timeout: 3000 });
     socket.once("connect", () => {

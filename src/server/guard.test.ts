@@ -46,6 +46,12 @@ describe("checkRequest for requests that change something", () => {
     expect(checkRequest({ host, origin, "content-type": "text/plain" }, PORT, "POST")?.status).toBe(403);
   });
 
+  it("wants the exact JSON media type, not a look-alike", () => {
+    expect(checkRequest({ host, origin, "content-type": "application/jsonp" }, PORT, "POST")?.status).toBe(403);
+    expect(checkRequest({ host, origin, "content-type": "Application/JSON ; charset=utf-8" }, PORT, "POST")).toBeNull();
+    expect(checkRequest({ host, origin, "content-type": "application/jsonp", "x-console": "1" }, PORT, "POST")).toBeNull();
+  });
+
   it("leaves GET and HEAD alone", () => {
     expect(checkRequest({ host }, PORT, "GET")).toBeNull();
     expect(checkRequest({ host }, PORT, "HEAD")).toBeNull();

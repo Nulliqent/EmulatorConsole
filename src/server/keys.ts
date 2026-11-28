@@ -1,9 +1,7 @@
 import { createHash } from "node:crypto";
-import path from "node:path";
 import type { Config } from "./config.js";
 import { readSmallFile } from "./safefile.js";
-
-const MAX_KEYS_BYTES = 4096;
+import { MAX_KEYS_BYTES, runFile } from "./sender/run-files.js";
 
 /** Where the run's keys are, as shown to the Developer. The file's contents never are. */
 export function keysDisplayPath(config: Config): string {
@@ -29,6 +27,6 @@ export function fingerprintKeys(text: string): string | null {
  * to the browser or logged.
  */
 export async function readKeysFingerprint(config: Config): Promise<string | null> {
-  const text = await readSmallFile(path.join(config.emulatorHome, String(config.emulatorPort), "emulator_credentials"), MAX_KEYS_BYTES);
+  const text = await readSmallFile(runFile(config, "emulator_credentials"), MAX_KEYS_BYTES);
   return text === null ? null : fingerprintKeys(text);
 }

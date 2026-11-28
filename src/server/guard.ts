@@ -35,7 +35,7 @@ function checkStateChange(headers: { origin?: string; "sec-fetch-site"?: string;
   if (headers.origin === undefined && headers["sec-fetch-site"] !== "same-origin") {
     return { status: 403, message: "Origin required" };
   }
-  const json = headers["content-type"]?.toLowerCase().startsWith("application/json") === true;
+  const json = headers["content-type"]?.split(";")[0]?.trim().toLowerCase() === "application/json";
   if (!json && headers["x-console"] !== "1") {
     return { status: 403, message: "Missing X-Console header" };
   }
