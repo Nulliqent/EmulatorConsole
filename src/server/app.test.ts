@@ -9,6 +9,7 @@ import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
 import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
+import { createMonitorFor } from "./monitor.js";
 import type { Config } from "./config.js";
 
 const SECRET_KEY_ID = "AKIATESTKEYIDSHOULDNEVERLEAK";
@@ -100,7 +101,7 @@ beforeAll(async () => {
     webRoot: web,
     modelIndexDir: path.join(process.cwd(), "data", "model-index"),
   };
-  consoleServer = createApp(config);
+  consoleServer = createApp(config, createMonitorFor(config));
   await new Promise<void>((r) => consoleServer.listen(config.port, "127.0.0.1", r));
 });
 
@@ -137,7 +138,28 @@ describe("API", () => {
 
   it("reports the Emulator reachable when /__admin/health answers over its own CA", async () => {
     const res = await get(host());
-    expect(JSON.parse(res.body)).toEqual({ emulator: { reachable: true, port: config.emulatorPort } });
+    const { emulator } = JSON.parse(res.body);
+    expect(emulator).toMatchObject({
+      reachable: true,
+      port: config.emulatorPort,
+      steps: { reach: "answered", trust: "trusted", keys: "read" },
+      restartedAt: null,
+    });
+    expect(emulator.lastAnswerAt).toEqual(expect.any(String));
+  });
+
+  it("checks now on POST /api/health/check, and refuses it as a GET", async () => {
+    const own = { ...host(), origin: `http://127.0.0.1:${config.port}`, "x-console": "1" };
+    const post = await request("POST", own, "/api/health/check");
+    // Without Origin and X-Console a POST is refused, as is one from another site.
+    expect((await request("POST", host(), "/api/health/check")).status).toBe(403);
+    expect((await request("POST", { ...own, "sec-fetch-site": "cross-site" }, "/api/health/check")).status).toBe(403);
+    expect((await request("POST", { ...host(), origin: own.origin }, "/api/health/check")).status).toBe(403);
+    expect(post.status).toBe(200);
+    expect(JSON.parse(post.body).emulator.reachable).toBe(true);
+    const get405 = await request("GET", host(), "/api/health/check");
+    expect(get405.status).toBe(405);
+    expect(get405.headers.allow).toBe("POST");
   });
 
   it("never sends the Emulator's credentials in any response", async () => {
@@ -188,7 +210,7 @@ describe("methods", () => {
   const host = () => ({ host: `127.0.0.1:${config.port}` });
 
   it("answers 405 with Allow for an unknown method on a known route", async () => {
-    const res = await request("POST", host(), "/api/health");
+    const res = await request("POST", { ...host(), origin: `http://127.0.0.1:${config.port}`, "x-console": "1" }, "/api/health");
     expect(res.status).toBe(405);
     expect(res.headers.allow).toBe("GET");
   });
@@ -237,7 +259,8 @@ describe("Service Model index API", () => {
   });
 
   it("is read-only", async () => {
-    expect((await request("POST", host(), "/api/services")).status).toBe(405);
+    const own = { ...host(), origin: `http://127.0.0.1:${config.port}`, "x-console": "1" };
+    expect((await request("POST", own, "/api/services")).status).toBe(405);
   });
 
   it("accepts a slug in place of an SDK ID", async () => {

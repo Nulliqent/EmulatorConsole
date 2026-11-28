@@ -2,7 +2,8 @@
 # The shared e2e stack: compose project console-e2e, Emulator on 19297, Console on 19298, Gateway port 19300.
 #   up    take the lock, build and start the stack
 #   down  stop the stack and release the lock (only if this run's `up` took it)
-#   run   up, run the e2e tests, then down (also on failure or interrupt)
+#   run   up, run the e2e tests (vitest, then Playwright UI tests), then down. On first use it downloads
+#         Chromium (about 150 MB) for the UI tests. (also on failure or interrupt)
 # The script takes and releases the lock itself (mkdir/rmdir on E2E_LOCK_DIR). Do not mkdir it by hand.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -61,7 +62,11 @@ up() {
   fi
   # The Emulator publishes ca.pem a moment after it starts answering.
   for _ in $(seq 1 30); do
-    if ls .aws/e2e/*/ca.pem >/dev/null 2>&1; then return 0; fi
+    if ls .aws/e2e/*/ca.pem >/dev/null 2>&1; then
+      # The Console's first health check may have run before ca.pem existed; have it look again now.
+      curl -fsS -X POST -H "Origin: http://127.0.0.1:${CONSOLE_PORT}" -H "X-Console: 1" "http://127.0.0.1:${CONSOLE_PORT}/api/health/check" >/dev/null || true
+      return 0
+    fi
     sleep 1
   done
   echo "ca.pem never appeared; ownership of the run folder:" >&2
@@ -78,6 +83,9 @@ case "${1:-}" in
   run)
     up # leaves the EXIT trap set, so the stack comes down whatever happens next
     npx vitest run --config vitest.e2e.config.ts
+    # The UI tests need Chromium; this is a no-op once it is installed (CI installs it with its system packages).
+    npx playwright install chromium
+    npx playwright test
     ;;
   *) echo "usage: $0 up|down|run" >&2; exit 2 ;;
 esac

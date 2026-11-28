@@ -12,9 +12,37 @@ export type Refusal = { status: number; message: string };
  * or whose Origin is present and is not the Console's own (cross-site requests).
  */
 export function checkRequest(
-  headers: { host?: string; origin?: string },
+  headers: { host?: string; origin?: string; "sec-fetch-site"?: string; "content-type"?: string; "x-console"?: string },
   port: number,
+  method = "GET",
 ): Refusal | null {
+  const refusal = checkHostAndOrigin(headers, port);
+  if (refusal) return refusal;
+  if (method === "GET" || method === "HEAD") return null;
+  return checkStateChange(headers);
+}
+
+/**
+ * Rules for a request that changes something (any method but GET and HEAD). A cross-site page can send a
+ * "simple" POST without a preflight, so the request must prove it came from the Console's own page:
+ * its Origin is the Console's (checked above) or, with no Origin, Sec-Fetch-Site says same-origin; and it carries
+ * a header a cross-site form cannot set (JSON content type, or X-Console: 1).
+ */
+function checkStateChange(headers: { origin?: string; "sec-fetch-site"?: string; "content-type"?: string; "x-console"?: string }): Refusal | null {
+  // The Sec-Fetch-Site rule has one owner, checkFetchSite (app.ts also runs it on every /api/ request).
+  const crossSite = checkFetchSite(headers);
+  if (crossSite) return crossSite;
+  if (headers.origin === undefined && headers["sec-fetch-site"] !== "same-origin") {
+    return { status: 403, message: "Origin required" };
+  }
+  const json = headers["content-type"]?.toLowerCase().startsWith("application/json") === true;
+  if (!json && headers["x-console"] !== "1") {
+    return { status: 403, message: "Missing X-Console header" };
+  }
+  return null;
+}
+
+function checkHostAndOrigin(headers: { host?: string; origin?: string }, port: number): Refusal | null {
   const hosts = allowedHosts(port);
   const host = headers.host?.toLowerCase();
   if (host === undefined || !hosts.has(host)) {

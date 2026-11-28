@@ -3,10 +3,11 @@
     "target": "ES2023",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "lib": ["ES2023", "DOM"],
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["src/server", "src/shared", "e2e", "vitest.config.ts", "vitest.e2e.config.ts"]
+  "include": ["src/server", "src/shared", "e2e", "vitest.config.ts", "vitest.e2e.config.ts", "playwright.config.ts"]
 }

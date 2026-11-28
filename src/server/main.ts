@@ -1,9 +1,12 @@
 import { createApp } from "./app.js";
 import { loadConfig } from "./config.js";
+import { createMonitorFor } from "./monitor.js";
 
 const config = loadConfig();
+const monitor = createMonitorFor(config);
+monitor.start();
 
-const servers = [createApp(config).listen(config.port, config.bindHost, () => {
+const servers = [createApp(config, monitor).listen(config.port, config.bindHost, () => {
   console.log(`Emulator Console on http://127.0.0.1:${config.port}`);
 })];
 
@@ -11,6 +14,7 @@ const servers = [createApp(config).listen(config.port, config.bindHost, () => {
 // and added to `servers` so it shuts down with the Console. Nothing listens on that port yet.
 
 function shutdown() {
+  monitor.stop();
   for (const server of servers) server.close();
   for (const server of servers) server.closeAllConnections();
   setTimeout(() => process.exit(0), 2000).unref();

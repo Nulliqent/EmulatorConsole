@@ -10,6 +10,8 @@ export type Config = {
   /** Where to reach the Emulator. */
   emulatorHost: string;
   emulatorPort: number;
+  /** How the Developer reaches the Emulator, shown in the UI. Defaults to emulatorHost:emulatorPort. */
+  emulatorDisplayAddress?: string;
   /** TLS name to verify the Emulator's certificate against, when it differs from emulatorHost. */
   emulatorTlsServername?: string;
   /** The Emulator's home folder, holding `<port>/ca.pem` and `<port>/emulator_credentials`. */
@@ -32,6 +34,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     gatewayPort: intFrom(env.GATEWAY_PORT, 9300),
     emulatorHost: env.EMULATOR_HOST ?? "127.0.0.1",
     emulatorPort: intFrom(env.EMULATOR_PORT, 9297),
+    emulatorDisplayAddress: env.EMULATOR_DISPLAY_ADDRESS || undefined,
     emulatorTlsServername: env.EMULATOR_TLS_SERVERNAME || undefined,
     emulatorHome: env.EMULATOR_HOME ?? path.join(env.HOME ?? "/", ".aws", "emulator"),
     webRoot: path.resolve(env.WEB_ROOT ?? path.join(import.meta.dirname, "..", "web")),

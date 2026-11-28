@@ -2,9 +2,9 @@ import http from "node:http";
 import type { HealthResponse } from "../shared/api.js";
 import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
 import type { Config } from "./config.js";
-import { checkEmulatorHealth } from "./emulator.js";
 import { checkFetchSite, checkRequest } from "./guard.js";
 import { modelIndex } from "./model-index/index.js";
+import type { Monitor } from "./monitor.js";
 import { readStatic } from "./static.js";
 
 export const SECURITY_HEADERS = {
@@ -20,7 +20,7 @@ export const SECURITY_HEADERS = {
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type Reply = { status: number; type?: string; body: unknown; headers?: Record<string, string> };
-type Handler = (ctx: { config: Config; url: URL; req: http.IncomingMessage }) => Promise<Reply> | Reply;
+type Handler = (ctx: { config: Config; monitor: Monitor; url: URL; req: http.IncomingMessage }) => Promise<Reply> | Reply;
 
 /** One entry per API path; each declares the methods it answers. Later tickets add routes here. */
 type Route = { path: string; methods: Partial<Record<Method, Handler>> };
@@ -29,10 +29,20 @@ const routes: Route[] = [
   {
     path: "/api/health",
     methods: {
-      // Health checks are not AWS calls; they never carry credentials.
-      GET: async ({ config }): Promise<Reply> => ({
+      // The monitor's latest result. Reading it has no side effects, and health checks are not AWS calls.
+      GET: async ({ monitor }): Promise<Reply> => ({
         status: 200,
-        body: { emulator: await checkEmulatorHealth(config) } satisfies HealthResponse,
+        body: { emulator: await monitor.current() } satisfies HealthResponse,
+      }),
+    },
+  },
+  {
+    path: "/api/health/check",
+    methods: {
+      // "Try again": checks now. A POST, since it makes the Console ask the Emulator.
+      POST: async ({ monitor }): Promise<Reply> => ({
+        status: 200,
+        body: { emulator: await monitor.checkNow() } satisfies HealthResponse,
       }),
     },
   },
@@ -118,10 +128,11 @@ function sendJson(res: http.ServerResponse, status: number, value: unknown, head
   send(res, status, "application/json", JSON.stringify(value), head, extra);
 }
 
-export function createApp(config: Config): http.Server {
+/** The caller creates and starts `monitor` (main.ts does); tests pass their own. */
+export function createApp(config: Config, monitor: Monitor): http.Server {
   return http.createServer(async (req, res) => {
     try {
-      const refusal = checkRequest(req.headers, config.port);
+      const refusal = checkRequest(req.headers, config.port, req.method);
       if (refusal) return sendJson(res, refusal.status, { error: refusal.message });
 
       const url = new URL(req.url ?? "/", "http://console.invalid");
@@ -138,7 +149,7 @@ export function createApp(config: Config): http.Server {
           res.setHeader("allow", Object.keys(route.methods).join(", "));
           return sendJson(res, 405, { error: "Method not allowed" }, head);
         }
-        const reply = await handler({ config, url, req });
+        const reply = await handler({ config, monitor, url, req });
         const etag = reply.headers?.etag;
         if (etag && req.headers["if-none-match"]?.split(",").some((t) => t.trim() === etag)) {
           res.writeHead(304, { ...SECURITY_HEADERS, ...reply.headers });

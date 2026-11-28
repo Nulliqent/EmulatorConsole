@@ -74,6 +74,8 @@ The reading order matches the visual order on every screen. In three-pane Calls,
 | Send | Stays on Send; the response is announced | |
 | Send returns a field error | The first field with an error | |
 | Restart notice appears | Unchanged | |
+| Restart notice is dismissed | The page's `h1` | |
+| Menu is open (below 640 px) and Escape is pressed | The Menu button | |
 | Set a Marker completes | Unchanged; the result is announced | |
 | Sidebar hidden | The Show sidebar button | |
 
