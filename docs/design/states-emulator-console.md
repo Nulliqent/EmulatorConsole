@@ -31,7 +31,7 @@ Severity: Critical causes confusion or data loss; Major significantly harms the 
 | ID | State | What the person sees | What they can do | Recovery and timings | Severity |
 |---|---|---|---|---|---|
 | C1 | No Calls match the filter | "No Calls match 'putitem'." Filter chips that are on are listed. | Clear the filter; turn chips off | | Minor |
-| C2 | Call limit reached | At the end of the list: "Older Calls are removed to keep the latest 5,000." | Clear Calls | Shown once the first Call is removed. | Minor |
+| C2 | Call limit reached | At the end of the list: "Older Calls are removed to keep the latest 5,000." When the bodies of the stored Calls pass 200 MB, the oldest Calls lose their bodies and keep their headers and summaries: each says "Body removed to save memory." in place of it. | Clear Calls | Shown once the first Call is removed, or the first body is. | Minor |
 | C3 | Many Calls arriving | New Calls join the list without moving the selected row. When the list is scrolled: "12 new Calls" at its top. | Show new Calls | Announcement rules are in the accessibility document. | Major |
 | C4 | Body cut at 256 KB | The body ends with "Cut at 256 KB of 1.8 MB." | Copy what was kept | | Minor |
 | C5 | Body is binary or compressed | "Binary body, 48 KB. Not shown." With the content type. | Copy as base64 | | Minor |

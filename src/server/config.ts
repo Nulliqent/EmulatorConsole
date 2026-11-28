@@ -5,8 +5,18 @@ export type Config = {
   bindHost: string;
   /** Port the Console listens on, and the port a browser uses to reach it. */
   port: number;
-  /** Port reserved for the Gateway (a later ticket). Nothing listens on it yet. */
+  /** Port the Gateway listens on (plain HTTP and TLS), bound to `bindHost`. */
   gatewayPort: number;
+  /**
+   * A folder to keep the Gateway's certificate in (`gateway.pem`, `gateway.key`), so a Developer trusts it once.
+   * Unset: a new certificate is made each time the Console starts.
+   */
+  gatewayCertDir?: string;
+  /**
+   * Host names besides localhost and loopback IPs the Gateway answers to (`GATEWAY_HOSTS`, comma-separated, no port),
+   * such as `host.docker.internal`. Anything else is refused with 421.
+   */
+  gatewayHosts: string[];
   /** Where to reach the Emulator. */
   emulatorHost: string;
   emulatorPort: number;
@@ -32,6 +42,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     bindHost: env.CONSOLE_BIND ?? "127.0.0.1",
     port: intFrom(env.CONSOLE_PORT, 9298),
     gatewayPort: intFrom(env.GATEWAY_PORT, 9300),
+    gatewayCertDir: env.GATEWAY_CERT_DIR || undefined,
+    gatewayHosts: (env.GATEWAY_HOSTS ?? "").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean),
     emulatorHost: env.EMULATOR_HOST ?? "127.0.0.1",
     emulatorPort: intFrom(env.EMULATOR_PORT, 9297),
     emulatorDisplayAddress: env.EMULATOR_DISPLAY_ADDRESS || undefined,

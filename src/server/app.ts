@@ -1,5 +1,7 @@
 import http from "node:http";
 import type { HealthResponse } from "../shared/api.js";
+import type { CallResponse, CallsResponse, ClearResponse, GatewaySettingsRequest, GatewayState, GatewayStatus, RevealResponse } from "../shared/calls.js";
+import { CallStore } from "./calls/store.js";
 import type { ServiceResponse, ServicesResponse, ShapesResponse } from "../shared/models.js";
 import type { Config } from "./config.js";
 import { checkFetchSite, checkRequest } from "./guard.js";
@@ -19,9 +21,13 @@ export const SECURITY_HEADERS = {
     "default-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'; object-src 'none'; frame-ancestors 'none'",
 };
 
+/** What the API needs of the Gateway: the Calls it recorded, whether it is listening, and its certificate. */
+export type CallsContext = { store: CallStore; gateway: () => { state: GatewayState; certificate: string } };
+
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+/** `type` set means `body` is a string sent as is, with that content type; otherwise `body` is sent as JSON. */
 type Reply = { status: number; type?: string; body: unknown; headers?: Record<string, string> };
-type Handler = (ctx: { config: Config; monitor: Monitor; url: URL; req: http.IncomingMessage }) => Promise<Reply> | Reply;
+type Handler = (ctx: { config: Config; monitor: Monitor; calls: CallsContext; url: URL; req: http.IncomingMessage }) => Promise<Reply> | Reply;
 
 /** One entry per API path; each declares the methods it answers. Later tickets add routes here. */
 type Route = { path: string; methods: Partial<Record<Method, Handler>> };
@@ -115,7 +121,116 @@ const routes: Route[] = [
       POST: ({ config, req }) => handleSend(config, req),
     },
   },
+  {
+    path: "/api/gateway",
+    methods: {
+      // The Gateway's state, the setting, counts and the first Call. A read changes nothing.
+      GET: ({ config, calls }): Reply => ({ status: 200, body: gatewayStatus(config, calls) }),
+    },
+  },
+  {
+    path: "/api/gateway/settings",
+    methods: {
+      // "Record headers and status only". Applies to Calls recorded after the change.
+      POST: async ({ config, calls, req }): Promise<Reply> => {
+        const body = await readJson<Partial<GatewaySettingsRequest>>(req);
+        if (typeof body?.headersOnly !== "boolean") return { status: 400, body: { error: "headersOnly must be true or false" } };
+        calls.store.headersOnly = body.headersOnly;
+        return { status: 200, body: gatewayStatus(config, calls) };
+      },
+    },
+  },
+  {
+    path: "/api/gateway/certificate",
+    methods: {
+      // The public certificate an SDK must trust to follow an https URL back to the Gateway (B4). No key is in it.
+      GET: ({ calls }): Reply => ({
+        status: 200,
+        type: "application/x-pem-file",
+        body: calls.gateway().certificate,
+        headers: { "content-disposition": 'attachment; filename="emulator-console-gateway.pem"' },
+      }),
+    },
+  },
+  {
+    path: "/api/calls",
+    methods: {
+      // Calls newest first, without headers or bodies. `before` and `after` are Call ids; `run` an Emulator Run.
+      GET: ({ calls, url }): Reply => {
+        const num = (name: string) => {
+          const v = url.searchParams.get(name);
+          return v === null || v === "" ? undefined : Number(v);
+        };
+        const [limit, before, after, run] = ["limit", "before", "after", "run"].map(num);
+        if ([limit, before, after, run].some((v) => v !== undefined && !Number.isFinite(v))) return { status: 400, body: { error: "limit, before, after and run must be numbers" } };
+        return { status: 200, body: calls.store.list({ limit, before, after, run }) satisfies CallsResponse };
+      },
+    },
+  },
+  {
+    path: "/api/calls/get",
+    methods: {
+      // One Call with its headers and bodies, hidden values still hidden.
+      GET: ({ calls, url }): Reply => {
+        const call = calls.store.get(Number(url.searchParams.get("id")));
+        return call ? { status: 200, body: { call } satisfies CallResponse } : { status: 404, body: { error: "No such Call" } };
+      },
+    },
+  },
+  {
+    path: "/api/calls/reveal",
+    methods: {
+      // The only route that sends hidden values: a POST, so it takes the stricter rule, and it names one Call.
+      POST: async ({ calls, req }): Promise<Reply> => {
+        const body = await readJson<{ id?: unknown }>(req);
+        const call = typeof body?.id === "number" ? calls.store.reveal(body.id) : undefined;
+        return call ? { status: 200, body: { call } satisfies RevealResponse } : { status: 404, body: { error: "No such Call" } };
+      },
+    },
+  },
+  {
+    path: "/api/calls/clear",
+    methods: {
+      POST: ({ calls }): Reply => ({ status: 200, body: { cleared: calls.store.clear() } satisfies ClearResponse }),
+    },
+  },
 ];
+
+function gatewayStatus(config: Config, calls: CallsContext): GatewayStatus {
+  const { store } = calls;
+  const first = store.firstOfRun;
+  return {
+    state: calls.gateway().state,
+    port: config.gatewayPort,
+    endpoint: `http://127.0.0.1:${config.gatewayPort}`,
+    headersOnly: store.headersOnly,
+    total: store.total,
+    lastId: store.lastId,
+    firstCall: first ? { id: first.id, operation: first.operation, method: first.method, path: first.path, startedAt: first.startedAt } : null,
+    refusedFromBrowser: store.browserRefusals,
+    tlsRefused: store.tlsRefusals,
+    certificatePath: "/api/gateway/certificate",
+  };
+}
+
+const MAX_JSON_BYTES = 4096;
+
+/** Reads a small JSON body, or returns undefined when it is missing, too large or not JSON. */
+async function readJson<T>(req: http.IncomingMessage): Promise<T | undefined> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of req as AsyncIterable<Buffer>) {
+    size += chunk.length;
+    if (size > MAX_JSON_BYTES) return undefined;
+    chunks.push(chunk);
+  }
+  try {
+    const value: unknown = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    return typeof value === "object" && value !== null ? (value as T) : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 /** The service a request names: `sdkId` or `slug`, never both empty. Lookups go through a Map, so any string is safe. */
 function serviceKey(url: URL): string | null {
@@ -136,8 +251,12 @@ function sendJson(res: http.ServerResponse, status: number, value: unknown, head
   send(res, status, "application/json", JSON.stringify(value), head, extra);
 }
 
-/** The caller creates and starts `monitor` (main.ts does); tests pass their own. */
-export function createApp(config: Config, monitor: Monitor): http.Server {
+/** The caller creates and starts `monitor` and the Gateway (main.ts does); tests pass their own. */
+export function createApp(
+  config: Config,
+  monitor: Monitor,
+  calls: CallsContext = { store: new CallStore(), gateway: () => ({ state: "failed", certificate: "" }) },
+): http.Server {
   return http.createServer(async (req, res) => {
     try {
       // The send route's own refusals have their own shape, so a client can tell the Console saying no from an Emulator answer.
@@ -161,12 +280,13 @@ export function createApp(config: Config, monitor: Monitor): http.Server {
           res.setHeader("allow", Object.keys(route.methods).join(", "));
           return deny(405, "Method not allowed", head);
         }
-        const reply = await handler({ config, monitor, url, req });
+        const reply = await handler({ config, monitor, calls, url, req });
         const etag = reply.headers?.etag;
         if (etag && req.headers["if-none-match"]?.split(",").some((t) => t.trim() === etag)) {
           res.writeHead(304, { ...SECURITY_HEADERS, ...reply.headers });
           return res.end();
         }
+        if (reply.type) return send(res, reply.status, reply.type, String(reply.body), head, reply.headers);
         return sendJson(res, reply.status, reply.body, head, reply.headers);
       }
 

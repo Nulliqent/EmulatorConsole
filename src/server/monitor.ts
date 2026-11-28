@@ -30,6 +30,8 @@ export type Monitor = {
   current(): Promise<EmulatorStatus>;
   /** Checks now (or returns a result under a second old) and restarts the timer from it. */
   checkNow(): Promise<EmulatorStatus>;
+  /** Calls `listener` with the detection time (ISO) each time a check sees the run's keys change. Returns a function that stops it. */
+  onRestart(listener: (at: string) => void): () => void;
 };
 
 export function stepsFor(health: EmulatorHealth, hasKeys: boolean): ConnectionSteps {
@@ -62,6 +64,7 @@ export function createMonitor(deps: MonitorDeps): Monitor {
   let running = false;
   let inflight: Promise<EmulatorStatus> | null = null;
   let lastStart = 0; // when the latest check began
+  const restartListeners = new Set<(at: string) => void>();
 
   function run(): Promise<EmulatorStatus> {
     inflight ??= (async () => {
@@ -84,6 +87,15 @@ export function createMonitor(deps: MonitorDeps): Monitor {
           lastAnswerAt: health.reachable ? at : state.lastAnswerAt,
           restartedAt: restarted ? at : state.restartedAt,
         };
+        if (restarted) {
+          for (const listener of restartListeners) {
+            try {
+              listener(at);
+            } catch {
+              /* a failing listener must not stop the monitor */
+            }
+          }
+        }
         return state;
       } finally {
         inflight = null;
@@ -102,6 +114,10 @@ export function createMonitor(deps: MonitorDeps): Monitor {
   }
 
   return {
+    onRestart(listener) {
+      restartListeners.add(listener);
+      return () => restartListeners.delete(listener);
+    },
     start() {
       if (running) return;
       running = true;

@@ -118,6 +118,7 @@ export async function startFakeEmulator(): Promise<FakeEmulator> {
     bindHost: "127.0.0.1",
     port: 9298,
     gatewayPort: 9300,
+    gatewayHosts: [],
     emulatorHost: "127.0.0.1",
     emulatorPort: port,
     emulatorTlsServername: "localhost",
